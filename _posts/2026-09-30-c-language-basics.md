@@ -282,6 +282,8 @@ int arr[MAX_SIZE];
 
 ### 3.6 sizeof：一个类型占多少字节
 
+{% raw %}
+
 ```c
 #include <stdio.h>
 
@@ -2207,3 +2209,4 @@ printf("=== arr[%d] 赋值完成\n", i);
 
 祝你写码顺利。
 
+{% endraw %}
