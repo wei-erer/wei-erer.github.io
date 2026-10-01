@@ -3,29 +3,55 @@ layout: default
 ---
 
 <div class="home">
-  {%- if page.title -%}
-    <h1 class="page-heading">{{ page.title }}</h1>
-  {%- endif -%}
+
+  <header class="home-hero">
+    {%- if site.avatar -%}
+      <img class="home-avatar"
+           src="{{ site.avatar | relative_url }}"
+           alt="{{ site.title | escape }}"
+           width="88" height="88"
+           onerror="this.style.display='none'">
+    {%- endif -%}
+
+    <h1 class="home-title">{{ site.title | default: page.title | escape }}</h1>
+
+    {%- assign tagline = site.tagline | default: site.description -%}
+    {%- if tagline and tagline != "" -%}
+      <p class="home-tagline">{{ tagline }}</p>
+    {%- endif -%}
+
+    <p class="home-meta">
+      <a href="{{ '/about/' | relative_url }}">关于我</a>
+      <span class="home-meta-sep">·</span>
+      <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+    </p>
+  </header>
 
   {{ content }}
 
   {%- if site.posts.size > 0 -%}
-    <h2 class="post-list-heading">{{ page.list_title | default: "最近更新" }}</h2>
+    <h2 class="post-list-heading">最近更新<span class="post-count">{{ site.posts.size }}</span></h2>
+
     <ul class="post-list">
       {%- for post in site.posts -%}
       <li>
         {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-        <span class="post-meta">{{ post.date | date: date_format }}</span>
+        <span class="post-meta">
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
+        </span>
+
         <h3>
           <a class="post-link" href="{{ post.url | relative_url }}">
             {{ post.title | escape }}
           </a>
         </h3>
+
         {%- if site.show_excerpts -%}
-          {{ post.excerpt }}
+          <div class="post-excerpt">{{ post.excerpt }}</div>
         {%- endif -%}
       </li>
       {%- endfor -%}
     </ul>
   {%- endif -%}
+
 </div>
