@@ -1,0 +1,105 @@
+---
+layout: default
+---
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+        {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+        {{ page.date | date: date_format }}
+      </time>
+      {%- if page.categories.size > 0 -%}
+        <span class="post-meta-sep">·</span>
+        <span class="post-categories">{{ page.categories | join: " / " }}</span>
+      {%- endif -%}
+      {%- if page.author -%}
+        <span class="post-meta-sep">·</span>
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <span class="p-author h-card" itemprop="name">{{ page.author | escape }}</span>
+        </span>
+      {%- endif -%}
+    </p>
+  </header>
+
+  <!-- 目录容器默认隐藏。下面那段脚本会遍历正文里的 h2 / h3：
+       小标题够多才生成目录并把容器显示出来，够不着就让它一直 hidden。 -->
+  <nav class="post-toc" id="post-toc" hidden aria-label="文章目录">
+    <details>
+      <summary>本文目录</summary>
+      <div class="post-toc-nav" id="post-toc-nav"></div>
+    </details>
+  </nav>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    {{ content }}
+  </div>
+
+  {%- if site.disqus.shortname -%}
+    {%- include disqus_comments.html -%}
+  {%- endif -%}
+
+  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
+</article>
+
+<script>
+/* 文章目录：遍历正文里的小标题，生成锚点链接。
+   整段包在 IIFE 里，不往 window 上挂任何东西。
+   小标题少于 4 个时（短文）直接不显示，免得占地方。 */
+(function () {
+  var content = document.querySelector('.post-content');
+  var host = document.getElementById('post-toc');
+  var nav = document.getElementById('post-toc-nav');
+  if (!content || !host || !nav) return;
+
+  var heads = content.querySelectorAll('h2, h3');
+  if (heads.length < 4) return;
+
+  function slug(text) {
+    return String(text)
+      .trim()
+      .toLowerCase()
+      .replace(/[\s]+/g, '-')
+      .replace(/[^\w\u4e00-\u9fa5-]/g, '')
+      .replace(/-{2,}/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  var used = {};
+
+  Array.prototype.forEach.call(heads, function (h) {
+    var id = h.id;
+    if (!id) {
+      id = slug(h.textContent) || 'sec';
+      if (used[id]) {
+        used[id]++;
+        id = id + '-' + used[id];
+      } else {
+        used[id] = 1;
+      }
+      h.id = id;
+    }
+
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = h.textContent.trim();
+    /* h3 缩进一层，层级一眼能看出来 */
+    a.className = h.tagName === 'H3' ? 'toc-h3' : 'toc-h2';
+    nav.appendChild(a);
+  });
+
+  host.hidden = false;
+
+  /* 点链接后自动收起目录。
+     不用 preventDefault：交给浏览器原生跳转，
+     地址栏会出现 #锚点，方便复制给别人直接定位到某一节。 */
+  nav.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+      var d = host.querySelector('details');
+      if (d) d.open = false;
+    }
+  });
+})();
+</script>
