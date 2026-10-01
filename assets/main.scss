@@ -1,24 +1,20 @@
 ---
 ---
-
 /* ==========================================================================
    伟er的储物袋  ·  纸感极简 · 墨青水墨
    --------------------------------------------------------------------------
    ⚠️ 这个文件是整站唯一生效的样式表。Jekyll 只会编译 assets/main.scss
       （因为只有它带 front matter，且被 _includes/head.html 引用）。
       放在 assets/css/style.scss 之类的文件不会被编译、也不会加载。
-
    设计原则
      1. 一套色：全部从「墨青」一个色相里取，不再混青绿 + 蓝灰 + 红色。
      2. 一个层级：标题靠字重、字距和留白分层，不靠虚线和彩色边框。
      3. 阅读优先：正文限宽 720px，行高 1.85，中文标点更松。
      4. 少即是多：卡片只有 1px 描边 + 极淡阴影，不做毛玻璃和大圆角。
-
    改配色：只动下面 :root 里的变量，其他不用碰。
    minima 2.5 用的是 Sass 变量（$brand-color 那套），不读 CSS 变量，
    所以配色统一在这里覆盖，不要再往 _sass 里塞东西。
    ========================================================================== */
-
 /* ---------- 设计变量 ---------- */
 :root {
   /* 纸与墨 */
@@ -28,12 +24,10 @@
   --ink-strong:   #1d2726;   /* 标题浓墨 */
   --ink-muted:    #78868a;   /* 日期、次要说明 */
   --ink-faint:    #a8b3b6;   /* 极次要 */
-
   /* 一个藏青，统管所有链接与强调 */
   --accent:       #27496d;
   --accent-deep:  #16304d;
   --accent-soft:  rgba(39, 73, 109, 0.10);
-
   /* 线与面 */
   --line:         rgba(39, 73, 109, 0.14);   /* 淡墨线 */
   --line-soft:    rgba(39, 73, 109, 0.08);
@@ -42,12 +36,10 @@
   --shadow-sm:    0 1px 2px rgba(31, 45, 51, 0.05);
   --shadow-md:    0 8px 24px rgba(31, 45, 51, 0.07);
   --shadow-lg:    0 12px 32px rgba(31, 45, 51, 0.11);
-
   /* 字号与节奏 */
   --font-size:    17.5px;
   --content-w:    720px;
   --line-h:       1.85;
-
   /* 字体：中文优先，西文与等宽走系统栈，无需联网加载 */
   --f-serif: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC",
              "SimSun", Georgia, serif;
@@ -57,7 +49,6 @@
   --f-mono:  "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono",
              Menlo, "Courier New", monospace;
 }
-
 /* ---------- 0. 全局底色：暖白纸 + 一层极淡水墨晕染 ---------- */
 body {
   background-color: var(--paper);
@@ -67,7 +58,6 @@ body {
     linear-gradient(180deg, #f6f8f7 0%, #f2f5f4 48%, #eef2f1 100%);
   background-repeat: no-repeat, no-repeat, no-repeat;
   background-attachment: fixed;
-
   font-family: var(--f-serif);
   font-size: var(--font-size);
   line-height: var(--line-h);
@@ -77,12 +67,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
-
 /* 段落与列表的垂直节奏交给下面各段自己定，这里只留必要的 */
 p, blockquote, ul, ol, dl, figure, pre, table {
   margin-bottom: 1.15em;
 }
-
 /* ---------- 1. 容器宽度：正文 720px，标题与代码块适度越界 ---------- */
 .wrapper {
   max-width: -webkit-calc(720px + 48px);
@@ -90,7 +78,6 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   padding-right: 24px;
   padding-left: 24px;
 }
-
 @media screen and (max-width: 760px) {
   .wrapper {
     max-width: none;
@@ -98,7 +85,6 @@ p, blockquote, ul, ol, dl, figure, pre, table {
     padding-left: 18px;
   }
 }
-
 /* ---------- 2. 顶栏：去掉 minima 那条 5px 粗黑线 ---------- */
 .site-header {
   border-top: 0;
@@ -108,7 +94,6 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   -webkit-backdrop-filter: blur(10px) saturate(1.1);
   backdrop-filter: blur(10px) saturate(1.1);
 }
-
 .site-title,
 .site-title:visited {
   font-family: var(--f-kai);
@@ -118,16 +103,13 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   letter-spacing: 0.07em;
   line-height: 68px;
 }
-
 .site-title:hover {
   text-decoration: none;
   color: var(--accent);
 }
-
 .site-nav {
   line-height: 68px;
 }
-
 .site-nav .page-link,
 .site-nav .nav-item {
   font-family: var(--f-sans);
@@ -138,20 +120,17 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   border-bottom: 2px solid transparent;
   transition: color 0.22s ease, border-color 0.22s ease;
 }
-
 .site-nav .page-link:hover,
 .site-nav .nav-item:hover {
   color: var(--accent);
   border-bottom-color: var(--accent);
   text-decoration: none;
 }
-
 @media screen and (max-width: 600px) {
   .site-title,
   .site-nav {
     line-height: 58px;
   }
-
   .site-nav {
     top: 11px;
     background-color: rgba(248, 250, 249, 0.97);
@@ -159,7 +138,6 @@ p, blockquote, ul, ol, dl, figure, pre, table {
     border-radius: 8px;
     box-shadow: var(--shadow-md);
   }
-
   /* 移动端下拉里恢复成块级排列，别继承 :not(:last-child) 的 20px 右边距 */
   .site-nav .page-link,
   .site-nav .nav-item {
@@ -168,18 +146,15 @@ p, blockquote, ul, ol, dl, figure, pre, table {
     line-height: 2;
   }
 }
-
 /* ---------- 3. 主内容区留白 ---------- */
 .page-content {
   padding: 52px 0 72px;
 }
-
 @media screen and (max-width: 600px) {
   .page-content {
     padding: 32px 0 48px;
   }
 }
-
 /* ---------- 4. 标题层级：靠字重 + 字距 + 留白，不靠彩色边框 ---------- */
 h1, h2, h3, h4, h5, h6,
 .site-title,
@@ -192,7 +167,6 @@ h1, h2, h3, h4, h5, h6,
   letter-spacing: 0.02em;
   text-shadow: none;
 }
-
 /* 正文标题 */
 .post-content h1,
 .post-content h2,
@@ -202,44 +176,36 @@ h1, h2, h3, h4, h5, h6,
   margin-top: 2em;
   margin-bottom: 0.7em;
 }
-
 .post-content h2 {
   font-size: 1.42rem;
   padding-bottom: 0.34em;
   border-bottom: 1px solid var(--line);
   letter-spacing: 0.03em;
 }
-
 .post-content h3 {
   font-size: 1.16rem;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
-
 .post-content h4 {
   font-size: 1.02rem;
   color: var(--ink);
 }
-
 /* 篇章第一个标题不要顶出多余的空白 */
 .post-content > :first-child {
   margin-top: 0;
 }
-
 .post-content p {
   margin-bottom: 1.2em;
 }
-
 /* ---------- 5. 链接：藏青 + 细下划线，去虚线噪点 ---------- */
 a {
   color: var(--accent);
   text-decoration: none;
 }
-
 a:visited {
   color: var(--accent);
 }
-
 a:hover {
   color: var(--accent-deep);
   text-decoration: underline;
@@ -247,12 +213,10 @@ a:hover {
   text-underline-offset: 3px;
   text-decoration-color: rgba(39, 73, 109, 0.5);
 }
-
 ::selection {
   background: rgba(39, 73, 109, 0.16);
   color: var(--ink-strong);
 }
-
 /* ---------- 6. 行内代码：淡墨底 + 藏青字（原来是刺眼的红色） ---------- */
 code {
   font-family: var(--f-mono);
@@ -264,7 +228,6 @@ code {
   padding: 0.18em 0.4em;
   word-break: break-word;
 }
-
 /* 代码块内部的 code 不要再叠一层背景和边距 */
 pre code,
 .highlight code {
@@ -274,7 +237,6 @@ pre code,
   color: inherit;
   font-size: 0.85em;
 }
-
 /* ---------- 7. 代码块：宣纸底 + 左侧墨青竖条 ---------- */
 pre,
 div.highlight,
@@ -285,7 +247,6 @@ code.highlighter-rouge {
   background-color: var(--code-block);
   box-shadow: inset 0 0 0 1px var(--line-soft);
 }
-
 pre,
 div.highlight,
 figure.highlight {
@@ -297,7 +258,6 @@ figure.highlight {
   font-size: 0.93rem;
   -webkit-overflow-scrolling: touch;
 }
-
 div.highlight pre,
 figure.highlight pre,
 .highlight pre {
@@ -308,25 +268,21 @@ figure.highlight pre,
   padding: 0;
   margin: 0;
 }
-
 /* 细滚动条，替代系统那根很重的灰条 */
 pre::-webkit-scrollbar,
 .highlight::-webkit-scrollbar {
   height: 8px;
   width: 8px;
 }
-
 pre::-webkit-scrollbar-thumb,
 .highlight::-webkit-scrollbar-thumb {
   background-color: rgba(39, 73, 109, 0.22);
   border-radius: 4px;
 }
-
 pre::-webkit-scrollbar-track,
 .highlight::-webkit-scrollbar-track {
   background-color: transparent;
 }
-
 /* 代码块在宽屏上可以比正文宽一点，长行少折几次 */
 @media screen and (min-width: 861px) {
   .post-content pre,
@@ -337,7 +293,6 @@ pre::-webkit-scrollbar-track,
     border-radius: 0 8px 8px 0;
   }
 }
-
 /* ---------- 7b. 语法高亮：换成墨青一套色 ----------
 /* ---------- 7b. 语法高亮：换成墨青一套色 ----------
    两套类名都写上，两边都不吃亏：
@@ -345,7 +300,6 @@ pre::-webkit-scrollbar-track,
      · hljs   —— highlight.js 的类名体系，比 rouge 细很多（.hljs-type / .hljs-built_in …）
    只写 rouge 那一套的话，hljs 那边会大量漏色；只写 hljs 则 rouge 漏色。
    两边都覆盖住，无论换成哪个高亮器，配色都是这一套墨青。 */
-
 /* 注释：灰青斜体，最弱一层 */
 .highlight .c,
 .highlight .c1,
@@ -360,7 +314,6 @@ pre::-webkit-scrollbar-track,
   color: #93a3a4;
   font-style: italic;
 }
-
 /* 关键字：藏青加粗 */
 .highlight .k,
 .highlight .kc,
@@ -377,7 +330,6 @@ pre::-webkit-scrollbar-track,
   color: #2c4f74;
   font-weight: 600;
 }
-
 /* 字符串：低饱和苔绿 */
 .highlight .s,
 .highlight .s1,
@@ -401,7 +353,6 @@ pre::-webkit-scrollbar-track,
 .highlight .hljs-template-variable {
   color: #4a6b57;
 }
-
 /* 数字与常量：低饱和赭石，唯一一点暖色，用来把数值挑出来 */
 .highlight .m,
 .highlight .mf,
@@ -414,7 +365,6 @@ pre::-webkit-scrollbar-track,
 .highlight .hljs-number {
   color: #7d5b3c;
 }
-
 /* 类型名、内建函数、标题：浓墨，比正文更实 */
 .highlight .nf,
 .highlight .fm,
@@ -445,7 +395,6 @@ pre::-webkit-scrollbar-track,
 .highlight .hljs-selector-pseudo {
   color: #1f3336;
 }
-
 /* 标点、运算符这些高频字符压到接近正文色，避免满屏花花绿绿 */
 .highlight .p,
 .highlight .o,
@@ -455,45 +404,37 @@ pre::-webkit-scrollbar-track,
 .highlight .hljs-operator {
   color: #3a4a4d;
 }
-
 /* 预处理指令（#include / #define 这类）压低一档，别抢正文注意力 */
 .highlight .hljs-meta,
 .highlight .hljs-meta .hljs-keyword {
   color: #6d7a7d;
   font-weight: 400;
 }
-
 /* diff 场景 */
 .highlight .gd,
 .highlight .hljs-deletion {
   color: #8c3b3b;
   background-color: rgba(140, 59, 59, 0.07);
 }
-
 .highlight .gi,
 .highlight .hljs-addition {
   color: #37664a;
   background-color: rgba(55, 102, 74, 0.07);
 }
-
 .highlight .err {
   color: #8c3b3b;
   background-color: transparent;
 }
-
 .highlight .hljs-section,
 .highlight .hljs-strong {
   font-weight: 600;
 }
-
 .highlight .hljs-emphasis {
   font-style: italic;
 }
-
 .highlight .hljs-link {
   text-decoration: underline;
 }
-
 /* ---------- 8. 引用块：楷体，去掉西文斜体 ---------- */
 blockquote {
   font-family: var(--f-kai);
@@ -507,11 +448,9 @@ blockquote {
   background-image: linear-gradient(to right, rgba(126, 156, 160, 0.1), rgba(126, 156, 160, 0));
   letter-spacing: 0.02em;
 }
-
 blockquote > :last-child {
   margin-bottom: 0;
 }
-
 /* ---------- 9. 表格：窄屏可横向滚动，不再撑破版面 ---------- */
 table {
   display: block;
@@ -523,37 +462,31 @@ table {
   font-size: 0.95rem;
   color: var(--ink);
 }
-
 table th,
 table td {
   padding: 9px 14px;
   border: 1px solid var(--line-soft);
 }
-
 table th {
   background-color: rgba(39, 73, 109, 0.07);
   color: var(--ink-strong);
   font-weight: 600;
   white-space: nowrap;
 }
-
 table tr:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.5);
 }
-
 /* ---------- 10. 列表标记：墨青小点，中文标点更松 ---------- */
 .post-content ul,
 .page-content ul {
   list-style: none;
   margin-left: 3px;
 }
-
 .post-content ul > li,
 .page-content ul > li {
   position: relative;
   padding-left: 20px;
 }
-
 .post-content ul > li::before,
 .page-content ul > li::before {
   content: "";
@@ -565,22 +498,18 @@ table tr:nth-child(even) {
   border-radius: 50%;
   background-color: rgba(39, 73, 109, 0.42);
 }
-
 .post-content li + li,
 .page-content li + li {
   margin-top: 0.38em;
 }
-
 .post-content ol,
 .page-content ol {
   margin-left: 1.4em;
 }
-
 .post-content ol > li::marker,
 .page-content ol > li::marker {
   color: var(--accent);
 }
-
 /* ---------- 11. 图片与分隔线 ---------- */
 .post-content img,
 .page-content img {
@@ -588,7 +517,6 @@ table tr:nth-child(even) {
   box-shadow: var(--shadow-sm);
   margin: 0.4em 0;
 }
-
 figcaption {
   font-family: var(--f-kai);
   font-size: 0.86rem;
@@ -596,7 +524,6 @@ figcaption {
   text-align: center;
   margin-top: 0.6em;
 }
-
 hr {
   border: 0;
   height: 1px;
@@ -607,11 +534,9 @@ hr {
     var(--line) 82%,
     rgba(39, 73, 109, 0) 100%);
 }
-
 /* ==========================================================================
    首页
    ========================================================================== */
-
 /* ---------- 12. 首屏：头像 + 站名 + 一句话 ---------- */
 .home-hero {
   text-align: center;
@@ -619,7 +544,6 @@ hr {
   margin-bottom: 34px;
   border-bottom: 1px solid var(--line-soft);
 }
-
 .home-avatar {
   width: 88px;
   height: 88px;
@@ -629,16 +553,18 @@ hr {
   border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow: 0 3px 14px rgba(31, 45, 51, 0.12);
 }
-
+/* 字号刻意不用 clamp(1.6rem, 1.2rem + 1.6vw, 2.05rem) 这种写法：
+   浏览器认，但 GitHub Pages 用的 Dart Sass 1.69.5 会把 clamp() 当成 Sass 自己的
+   数学函数，看到 rem 和 vw 相加就报 "Incompatible units" 让整个构建失败。
+   改成固定值 + 媒体查询，效果一样，老编译器也吃得下。 */
 .home-title {
   font-family: var(--f-kai);
-  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.05rem);
+  font-size: 2rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--ink-strong);
   margin: 0 0 10px;
 }
-
 .home-tagline {
   font-family: var(--f-kai);
   font-size: 0.98rem;
@@ -646,7 +572,6 @@ hr {
   letter-spacing: 0.1em;
   margin: 0 0 16px;
 }
-
 .home-meta {
   font-family: var(--f-sans);
   font-size: 0.82rem;
@@ -654,25 +579,21 @@ hr {
   letter-spacing: 0.06em;
   margin: 0;
 }
-
 .home-meta a {
   color: var(--ink-muted);
   border-bottom: 1px solid var(--line);
   padding-bottom: 1px;
   transition: color 0.22s ease, border-color 0.22s ease;
 }
-
 .home-meta a:hover {
   color: var(--accent);
   border-bottom-color: var(--accent);
   text-decoration: none;
 }
-
 .home-meta-sep {
   margin: 0 9px;
   color: var(--ink-faint);
 }
-
 /* ---------- 13. 列表标题 + 文章数角标 ---------- */
 .post-list-heading {
   font-family: var(--f-kai);
@@ -685,14 +606,12 @@ hr {
   align-items: center;
   gap: 10px;
 }
-
 .post-list-heading::after {
   content: "";
   flex: 1;
   height: 1px;
   background: linear-gradient(to right, var(--line), rgba(39, 73, 109, 0));
 }
-
 .post-count {
   order: 3;
   font-family: var(--f-mono);
@@ -704,13 +623,11 @@ hr {
   padding: 4px 8px;
   letter-spacing: 0.04em;
 }
-
 /* ---------- 14. 文章卡片：整张可点，悬停微抬 ---------- */
 .post-list {
   margin-left: 0;
   list-style: none;
 }
-
 .post-list > li {
   position: relative;
   margin-bottom: 16px;
@@ -721,13 +638,11 @@ hr {
   box-shadow: var(--shadow-sm);
   transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
 }
-
 .post-list > li:hover {
   transform: translateY(-2px);
   border-color: var(--line);
   box-shadow: var(--shadow-lg);
 }
-
 .post-list .post-meta {
   display: block;
   font-family: var(--f-mono);
@@ -736,7 +651,6 @@ hr {
   letter-spacing: 0.08em;
   margin-bottom: 6px;
 }
-
 .post-list .post-link {
   display: inline-block;
   font-family: var(--f-kai);
@@ -747,7 +661,6 @@ hr {
   letter-spacing: 0.02em;
   text-decoration: none;
 }
-
 /* 让整张卡片都能点，省得只点得到标题那几个字。
    注意用 top/right/bottom/left 而不是 inset，
    因为这里可能的访问者里有老版本 Edge，inset 在它上面不生效。 */
@@ -760,154 +673,137 @@ hr {
   left: 0;
   border-radius: 8px;
 }
-
 .post-list > li:hover .post-link {
   color: var(--accent);
 }
-
 .post-excerpt {
   margin-top: 10px;
   font-size: 0.94rem;
   color: var(--ink-muted);
   line-height: 1.75;
   display: -webkit-box;
+  /* 只写带前缀的这个：无前缀的 line-clamp 在 Dart Sass 1.69 眼里是未知属性，
+     会刷一堆警告（不影响构建，但没必要）。浏览器实际生效的也是这一条。 */
   -webkit-line-clamp: 3;
-  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 .post-excerpt p {
   margin-bottom: 0;
 }
-
 .post-excerpt a {
   color: var(--accent);
 }
-
 /* ==========================================================================
    文章页
    ========================================================================== */
-
 /* ---------- 15. 文章头部 ---------- */
 .post-header {
   margin-bottom: 34px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--line-soft);
 }
-
+/* 同上：不用 clamp()，否则老版 Dart Sass 会报 Incompatible units */
 .post-title,
 .page-heading {
   font-family: var(--f-kai);
-  font-size: clamp(1.52rem, 1.2rem + 1.8vw, 1.95rem);
+  font-size: 1.85rem;
   font-weight: 600;
   line-height: 1.42;
   letter-spacing: 0.02em;
   color: var(--ink-strong);
   margin-bottom: 12px;
 }
-
 .post-meta {
   font-family: var(--f-sans);
   font-size: 0.82rem;
   color: var(--ink-muted);
   letter-spacing: 0.05em;
 }
-
 .post-content {
   margin-bottom: 48px;
 }
-
 /* ---------- 16. 页脚 ---------- */
 .site-footer {
   border-top: 1px solid var(--line-soft);
   padding: 30px 0 34px;
   background-color: rgba(246, 248, 247, 0.7);
 }
-
 .footer-col-wrapper,
 .social-links {
   color: var(--ink-muted);
   font-size: 0.86rem;
 }
-
 .footer-heading {
   font-family: var(--f-kai);
   font-size: 1rem;
   color: var(--ink-strong);
   letter-spacing: 0.06em;
 }
-
 .contact-list,
 .social-media-list {
   font-family: var(--f-sans);
   font-size: 0.85rem;
 }
-
 .social-media-list a,
 .contact-list a {
   color: var(--ink-muted);
 }
-
 .social-media-list a:hover,
 .contact-list a:hover {
   color: var(--accent);
 }
-
 /* ---------- 17. 小屏收尾 ---------- */
 @media screen and (max-width: 600px) {
   :root {
     --font-size: 16.5px;
   }
-
   .home-avatar {
     width: 72px;
     height: 72px;
     margin-bottom: 14px;
   }
-
   .home-hero {
     padding-bottom: 26px;
     margin-bottom: 26px;
   }
-
+  /* 小屏把两个大标题收一档 —— 原来 clamp() 干的活，现在靠这两条 */
+  .home-title {
+    font-size: 1.75rem;
+  }
+  .post-title,
+  .page-heading {
+    font-size: 1.6rem;
+  }
   .post-list > li {
     padding: 16px 16px 18px;
   }
-
   .post-list .post-link {
     font-size: 1.08rem;
   }
-
   .post-list > li:hover {
     transform: none;
   }
-
   pre,
   div.highlight,
   figure.highlight {
     padding: 12px 13px;
     border-radius: 0 6px 6px 0;
   }
-
   .post-header {
     margin-bottom: 24px;
   }
-
   .post-content h2 {
     font-size: 1.26rem;
   }
-
   .post-content h3 {
     font-size: 1.08rem;
   }
-
   .post-content ul,
   .page-content ul {
     margin-left: 0;
   }
 }
-
 /* ---------- 18. 打印：去掉装饰，省墨 ---------- */
 @media print {
   .site-header,
@@ -916,12 +812,10 @@ hr {
   .post-list-heading::after {
     display: none;
   }
-
   body {
     background: #fff;
     font-size: 12pt;
   }
-
   .post-content pre,
   .post-content div.highlight,
   .post-content figure.highlight {
