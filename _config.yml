@@ -1,39 +1,38 @@
-# Welcome to Jekyll!
+# 伟er的储物袋 · Jekyll 配置
 #
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
+# 这份 = 线上 _config.yml 的完整内容 + 标了 ★ 的几行新增项，
+# 键值没有删改任何一条，所以可以整份替换线上的同名文件。
 #
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-#
-# If you need help with YAML syntax, here are some quick references for you:
-# https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
-# https://learnxinyminutes.com/docs/yaml/
-#
-# Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
-
+# 站点基本信息
 title: 伟er的储物袋
 email: weihao1024@126.com
 description: "于二进制世界中寻仙问道"
 baseurl: ""
 url: "https://wei-erer.github.io"
-# twitter_username: jekyllrb
 github_username: wei-erer
-
-# Build settings
+# twitter_username: jekyllrb
+# 外观
+avatar: "/assets/images/avatar.jpg"      # ★ 新增：首页头像（原来这行没有任何模板读它，所以从没显示过）
+show_excerpts: true                      # ★ 新增：首页文章卡片显示摘要
+tagline: "于二进制世界中寻仙问道"          # ★ 新增：首页站名下面那句话
+# 顶部导航
+header_pages:
+  - about.markdown
+# 构建
+#
+# 说明：minima 2.5 的配色走 Sass 变量（$brand-color 那一套），不读 CSS 变量，
+# 所以想改配色请动 assets/main.scss 顶部的 :root，改那一处就全站生效。
 theme: minima
 plugins:
   - jekyll-feed
-avatar: "/assets/images/avatar.jpg"
-
-header_pages:
-  - about.markdown
+  - jekyll-seo-tag                       # ★ 新增：社交分享卡片 / 搜索结果摘要
+# 排除：下面三个目录只在本地有用（离线预览、皮肤原稿、自检脚本），
+# 不需要上传，也不用让 Jekyll 处理。
+exclude:
+  - _reference
+  - _tools
+  - _preview
+# 以下为 Jekyll 自带的排除项说明，保留备查。
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
