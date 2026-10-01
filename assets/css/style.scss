@@ -1,0 +1,48 @@
+---
+---
+@import "minima";
+
+/* ---------- 古风水墨皮肤 CSS 开始 ---------- */
+:root {
+  --ink-bg: #eef2f2;
+  --ink-paper: rgba(255, 255, 255, 0.56);
+  --ink-text: #3b464a;
+  --ink-heading: #22302f;
+  --ink-muted: #7c8a8d;
+  --ink-blue: #27496d;
+  --ink-blue-deep: #16304d;
+  --ink-line: rgba(39, 73, 109, 0.16);
+  --ink-shadow: rgba(46, 68, 76, 0.08);
+  --ink-serif: "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", "Source Han Serif SC", serif;
+  --ink-kai:   "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", "SimSun", serif;
+}
+body {
+  background-color: var(--ink-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23p)' opacity='0.3'/%3E%3C/svg%3E"), radial-gradient(58% 42% at 12% 6%, rgba(126, 156, 160, 0.18), rgba(126, 156, 160, 0) 70%), radial-gradient(48% 38% at 88% 10%, rgba(142, 162, 178, 0.16), rgba(142, 162, 178, 0) 72%), radial-gradient(72% 55% at 50% 104%, rgba(108, 134, 138, 0.14), rgba(108, 134, 138, 0) 76%), linear-gradient(180deg, #f2f5f5 0%, #eaf0ef 55%, #e6edec 100%);
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 240px 240px, cover, cover, cover, cover;
+  background-attachment: fixed;
+}
+body {
+  font-family: var(--ink-serif);
+  color: var(--ink-text);
+  line-height: 1.8;
+}
+h1, h2, h3, h4, h5, h6, .site-title, .post-title, .page-heading, .post-list-heading {
+  font-family: var(--ink-kai);
+  color: var(--ink-heading);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+a { color: var(--ink-blue); text-decoration: none; }
+a:hover { color: var(--ink-blue-deep); text-decoration: underline; text-underline-offset: 3px; }
+.post-list > li, .post {
+  background-color: var(--ink-paper);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(46, 68, 76, 0.04), 0 8px 24px var(--ink-shadow);
+  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+}
+.site-header { background-color: transparent; border-bottom: 1px solid var(--ink-line); }
+/* ---------- 古风水墨皮肤 CSS 结束 ---------- */
