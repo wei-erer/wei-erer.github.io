@@ -71,14 +71,14 @@ body {
 p, blockquote, ul, ol, dl, figure, pre, table {
   margin-bottom: 1.15em;
 }
-/* ---------- 1. 容器宽度：正文 720px，标题与代码块适度越界 ---------- */
+/* ---------- 1. 容器宽度：正文 780px，标题与代码块适度越界 ---------- */
 .wrapper {
-  max-width: -webkit-calc(720px + 48px);
-  max-width:         calc(720px + 48px);
+  max-width: -webkit-calc(780px + 48px);
+  max-width:         calc(780px + 48px);
   padding-right: 24px;
   padding-left: 24px;
 }
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 820px) {
   .wrapper {
     max-width: none;
     padding-right: 18px;
@@ -131,20 +131,64 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   .site-nav {
     line-height: 58px;
   }
+  /* 导航直接平铺，不折叠。
+     理由：顶部只有一个「关于我」，为了它藏进汉堡菜单、逼用户多点一次不值当。
+     下面这两条 !important 是必须的 —— minima 在同一个断点里写了
+       .site-nav { position: absolute; ... }
+       .nav-trigger { display: none }
+       .menu-icon { display: block }
+       input ~ .trigger { display: none }
+       input:checked ~ .trigger { display: block }
+     选择器权重和我们的一样，只能靠 !important 盖过去。 */
   .site-nav {
-    top: 11px;
-    background-color: rgba(248, 250, 249, 0.97);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    box-shadow: var(--shadow-md);
+    position: static !important;
+    float: right;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0;
   }
-  /* 移动端下拉里恢复成块级排列，别继承 :not(:last-child) 的 20px 右边距 */
+  .site-nav .nav-trigger,
+  .site-nav .menu-icon {
+    display: none !important;
+  }
+  .site-nav .trigger {
+    display: block !important;
+    clear: none !important;
+    padding-bottom: 0 !important;
+  }
   .site-nav .page-link,
   .site-nav .nav-item {
-    margin-right: 0;
+    display: inline-block;
+    margin: 0 0 0 16px !important;
+    padding: 0 !important;
+    line-height: 58px;
+    color: var(--ink-muted);
     border-bottom: 0;
-    line-height: 2;
   }
+  .site-nav .page-link:hover,
+  .site-nav .nav-item:hover {
+    color: var(--accent);
+  }
+}
+/* 万一以后导航项变多、窄屏真需要折叠，这个按钮也是能看的：
+   圆形浅底 + 描边 + 悬停变色，比 minima 默认那条几乎看不见的细灰线清楚得多。 */
+.site-nav label[for="nav-trigger"] {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.75);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.site-nav label[for="nav-trigger"]:hover {
+  border-color: var(--accent);
+  background-color: #fff;
+}
+.site-nav .menu-icon > svg {
+  fill: var(--ink-strong);
+}
+.site-nav label[for="nav-trigger"]:hover .menu-icon > svg {
+  fill: var(--accent);
 }
 /* ---------- 3. 主内容区留白 ---------- */
 .page-content {
@@ -292,6 +336,89 @@ pre::-webkit-scrollbar-track,
     margin-left: -24px;
     border-radius: 0 8px 8px 0;
   }
+}
+/* ---------- 7c. 文章目录（TOC）----------
+   目录挂在文章标题下面，用 <details> 做的，不依赖 JavaScript 就能收起展开。
+   之所以不做成右侧悬浮目录：那需要把整页容器加宽到 1100px 左右，
+   正文 780px 就不再居中了，居中一破，整页观感反而更乱。
+   目前这样"标题下方、点击展开"在宽屏和手机上表现一致，也最不容易出问题。
+   生成目录的脚本在 _layouts/post.html 里，没有 JS 时这一段自动隐藏。 */
+.post-toc {
+  margin: 0 0 32px;
+  padding: 14px 18px 16px;
+  background-color: var(--paper-raise);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.post-toc summary {
+  cursor: pointer;
+  font-family: var(--f-kai);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--ink-strong);
+  letter-spacing: 0.05em;
+  list-style: none;
+}
+/* 去掉浏览器默认那个三角，换成自己的箭头 */
+.post-toc summary::-webkit-details-marker {
+  display: none;
+}
+.post-toc summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--accent);
+  transition: transform 0.2s ease;
+}
+.post-toc[open] summary::before {
+  transform: rotate(90deg);
+}
+.post-toc summary:hover {
+  color: var(--accent);
+}
+.post-toc-nav {
+  margin-top: 10px;
+  padding-left: 2px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 10px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.post-toc-nav a {
+  display: block;
+  color: var(--ink-muted);
+  text-decoration: none;
+  padding: 2px 0;
+  border-left: 2px solid transparent;
+  padding-left: 10px;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.post-toc-nav a:hover {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+.post-toc-nav a.toc-h3 {
+  margin-left: 18px;
+  font-size: 0.86rem;
+}
+.post-toc-nav a.toc-h2 {
+  color: var(--ink);
+}
+/* 用细滚动条，避免目录长了以后出现一根很重的灰条 */
+.post-toc-nav::-webkit-scrollbar {
+  width: 6px;
+}
+.post-toc-nav::-webkit-scrollbar-thumb {
+  background-color: rgba(39, 73, 109, 0.2);
+  border-radius: 3px;
+}
+/* 标题被目录跳转定位时，上面留点空间，别贴着顶栏 */
+.post-content h2,
+.post-content h3 {
+  scroll-margin-top: 72px;
 }
 /* ---------- 7b. 语法高亮：换成墨青一套色 ----------
 /* ---------- 7b. 语法高亮：换成墨青一套色 ----------
