@@ -59,6 +59,31 @@
 }
 
 /* ---------- 0. 全局底色：暖白纸 + 一层极淡水墨晕染 ---------- */
+/* html 也要上底色。只给 body 设的话，滚动到边界、点滚动条轨道、
+   或者移动端下拉橡皮筋时，会露出浏览器默认的白底 ——
+   深色模式下尤其明显，页顶会出现一条白边。
+   color-scheme 顺带告诉浏览器用深色滚动条和表单控件。 */
+html {
+  background-color: var(--paper);
+}
+
+:root {
+  color-scheme: light;
+  scrollbar-color: rgba(39, 73, 109, 0.32) transparent;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  scrollbar-color: rgba(180, 205, 215, 0.28) transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    scrollbar-color: rgba(180, 205, 215, 0.28) transparent;
+  }
+}
+
 body {
   background-color: var(--paper);
   background-image:
@@ -158,23 +183,38 @@ p, blockquote, ul, ol, dl, figure, pre, table {
 }
 
 @media screen and (max-width: 600px) {
-  .site-title,
-  .site-nav {
-    line-height: 58px;
-  }
-
-  /* 导航直接平铺，不折叠。
-     理由：顶部只有一个「关于我」，为了它藏进汉堡菜单、逼用户多点一次不值当。
-     下面这两条 !important 是必须的 —— minima 在同一个断点里写了
-       .site-nav { position: absolute; ... }
+  /* 窄屏改成两行：站名一行，导航项一行居中。
+     原来是把导航挤在站名右边，四项在 600px 以下会连成
+     「归档标签搜索关于我」一串，很难看。
+     下面这些 !important 是必须的 —— minima 在同一个断点里写了
+       .site-nav { position: absolute; background-color: ...; border: ... }
        .nav-trigger { display: none }
        .menu-icon { display: block }
        input ~ .trigger { display: none }
-       input:checked ~ .trigger { display: block }
-     选择器权重和我们的一样，只能靠 !important 盖过去。 */
+       input:checked ~ .trigger { display: block; padding-bottom: 5px }
+     选择器权重和我们写的一样，不写 !important 盖不住。 */
+  .site-header .wrapper {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .site-title,
+  .site-title:visited {
+    display: block;
+    float: none;
+    text-align: center;
+    line-height: 1.5;
+    font-size: 1.1rem;
+  }
+
   .site-nav {
     position: static !important;
-    float: right;
+    float: none;
+    display: block;
+    width: 100%;
+    line-height: 1.5;
+    margin-top: 6px;
+    text-align: center;
     background: none !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -190,21 +230,25 @@ p, blockquote, ul, ol, dl, figure, pre, table {
     display: block !important;
     clear: none !important;
     padding-bottom: 0 !important;
+    white-space: normal;
   }
 
   .site-nav .page-link,
   .site-nav .nav-item {
     display: inline-block;
-    margin: 0 0 0 16px !important;
-    padding: 0 !important;
-    line-height: 58px;
+    margin: 0 2px !important;
+    padding: 4px 10px !important;
+    line-height: 1.6;
+    font-size: 0.84rem;
     color: var(--ink-muted);
     border-bottom: 0;
+    border-radius: 999px;
   }
 
   .site-nav .page-link:hover,
   .site-nav .nav-item:hover {
     color: var(--accent);
+    background-color: var(--accent-soft);
   }
 }
 
