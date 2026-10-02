@@ -1,20 +1,24 @@
 ---
 ---
+
 /* ==========================================================================
    伟er的储物袋  ·  纸感极简 · 墨青水墨
    --------------------------------------------------------------------------
    ⚠️ 这个文件是整站唯一生效的样式表。Jekyll 只会编译 assets/main.scss
       （因为只有它带 front matter，且被 _includes/head.html 引用）。
       放在 assets/css/style.scss 之类的文件不会被编译、也不会加载。
+
    设计原则
      1. 一套色：全部从「墨青」一个色相里取，不再混青绿 + 蓝灰 + 红色。
      2. 一个层级：标题靠字重、字距和留白分层，不靠虚线和彩色边框。
      3. 阅读优先：正文限宽 720px，行高 1.85，中文标点更松。
      4. 少即是多：卡片只有 1px 描边 + 极淡阴影，不做毛玻璃和大圆角。
+
    改配色：只动下面 :root 里的变量，其他不用碰。
    minima 2.5 用的是 Sass 变量（$brand-color 那套），不读 CSS 变量，
    所以配色统一在这里覆盖，不要再往 _sass 里塞东西。
    ========================================================================== */
+
 /* ---------- 设计变量 ---------- */
 :root {
   /* 纸与墨 */
@@ -24,10 +28,12 @@
   --ink-strong:   #1d2726;   /* 标题浓墨 */
   --ink-muted:    #78868a;   /* 日期、次要说明 */
   --ink-faint:    #a8b3b6;   /* 极次要 */
+
   /* 一个藏青，统管所有链接与强调 */
   --accent:       #27496d;
   --accent-deep:  #16304d;
   --accent-soft:  rgba(39, 73, 109, 0.10);
+
   /* 线与面 */
   --line:         rgba(39, 73, 109, 0.14);   /* 淡墨线 */
   --line-soft:    rgba(39, 73, 109, 0.08);
@@ -36,10 +42,12 @@
   --shadow-sm:    0 1px 2px rgba(31, 45, 51, 0.05);
   --shadow-md:    0 8px 24px rgba(31, 45, 51, 0.07);
   --shadow-lg:    0 12px 32px rgba(31, 45, 51, 0.11);
+
   /* 字号与节奏 */
   --font-size:    17.5px;
   --content-w:    720px;
   --line-h:       1.85;
+
   /* 字体：中文优先，西文与等宽走系统栈，无需联网加载 */
   --f-serif: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC",
              "SimSun", Georgia, serif;
@@ -49,6 +57,7 @@
   --f-mono:  "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono",
              Menlo, "Courier New", monospace;
 }
+
 /* ---------- 0. 全局底色：暖白纸 + 一层极淡水墨晕染 ---------- */
 body {
   background-color: var(--paper);
@@ -58,6 +67,7 @@ body {
     linear-gradient(180deg, #f6f8f7 0%, #f2f5f4 48%, #eef2f1 100%);
   background-repeat: no-repeat, no-repeat, no-repeat;
   background-attachment: fixed;
+
   font-family: var(--f-serif);
   font-size: var(--font-size);
   line-height: var(--line-h);
@@ -67,24 +77,33 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
+
 /* 段落与列表的垂直节奏交给下面各段自己定，这里只留必要的 */
 p, blockquote, ul, ol, dl, figure, pre, table {
   margin-bottom: 1.15em;
 }
-/* ---------- 1. 容器宽度：正文 780px，标题与代码块适度越界 ---------- */
+
+/* ---------- 1. 容器宽度：正文 780px，标题与代码块适度越界 ----------
+   宽屏（>900px）：外层封顶 780+48，内层稳定 780px 居中。
+   窄屏（≤900px）：外层交给 100% - 44px 的 max-width 控边距，
+                   这样内容在窄窗口里也不会贴到屏幕边，
+                   左右各留 22px，比原来的 18px 更透气。 */
 .wrapper {
-  max-width: -webkit-calc(780px + 48px);
-  max-width:         calc(780px + 48px);
-  padding-right: 24px;
-  padding-left: 24px;
+  max-width: -webkit-calc(100% - 44px);
+  max-width:         calc(100% - 44px);
+  padding-right: 22px;
+  padding-left: 22px;
 }
-@media screen and (max-width: 820px) {
+
+@media screen and (min-width: 901px) {
   .wrapper {
-    max-width: none;
-    padding-right: 18px;
-    padding-left: 18px;
+    max-width: -webkit-calc(780px + 48px);
+    max-width:         calc(780px + 48px);
+    padding-right: 24px;
+    padding-left: 24px;
   }
 }
+
 /* ---------- 2. 顶栏：去掉 minima 那条 5px 粗黑线 ---------- */
 .site-header {
   border-top: 0;
@@ -94,6 +113,7 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   -webkit-backdrop-filter: blur(10px) saturate(1.1);
   backdrop-filter: blur(10px) saturate(1.1);
 }
+
 .site-title,
 .site-title:visited {
   font-family: var(--f-kai);
@@ -102,14 +122,23 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   color: var(--ink-strong);
   letter-spacing: 0.07em;
   line-height: 68px;
+  /* 站名必须一行显示。少了这条，窗口一窄标题就会折成
+     「伟er」/「的储物袋」两行，而 line-height: 68px 是给单行算的，
+     折行后整个顶栏高度就乱了。 */
+  white-space: nowrap;
 }
+
 .site-title:hover {
   text-decoration: none;
   color: var(--accent);
 }
+
 .site-nav {
   line-height: 68px;
+  /* 导航同样不折行 */
+  white-space: nowrap;
 }
+
 .site-nav .page-link,
 .site-nav .nav-item {
   font-family: var(--f-sans);
@@ -120,17 +149,20 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   border-bottom: 2px solid transparent;
   transition: color 0.22s ease, border-color 0.22s ease;
 }
+
 .site-nav .page-link:hover,
 .site-nav .nav-item:hover {
   color: var(--accent);
   border-bottom-color: var(--accent);
   text-decoration: none;
 }
+
 @media screen and (max-width: 600px) {
   .site-title,
   .site-nav {
     line-height: 58px;
   }
+
   /* 导航直接平铺，不折叠。
      理由：顶部只有一个「关于我」，为了它藏进汉堡菜单、逼用户多点一次不值当。
      下面这两条 !important 是必须的 —— minima 在同一个断点里写了
@@ -148,15 +180,18 @@ p, blockquote, ul, ol, dl, figure, pre, table {
     box-shadow: none !important;
     padding: 0;
   }
+
   .site-nav .nav-trigger,
   .site-nav .menu-icon {
     display: none !important;
   }
+
   .site-nav .trigger {
     display: block !important;
     clear: none !important;
     padding-bottom: 0 !important;
   }
+
   .site-nav .page-link,
   .site-nav .nav-item {
     display: inline-block;
@@ -166,11 +201,13 @@ p, blockquote, ul, ol, dl, figure, pre, table {
     color: var(--ink-muted);
     border-bottom: 0;
   }
+
   .site-nav .page-link:hover,
   .site-nav .nav-item:hover {
     color: var(--accent);
   }
 }
+
 /* 万一以后导航项变多、窄屏真需要折叠，这个按钮也是能看的：
    圆形浅底 + 描边 + 悬停变色，比 minima 默认那条几乎看不见的细灰线清楚得多。 */
 .site-nav label[for="nav-trigger"] {
@@ -180,25 +217,31 @@ p, blockquote, ul, ol, dl, figure, pre, table {
   box-shadow: var(--shadow-sm);
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
+
 .site-nav label[for="nav-trigger"]:hover {
   border-color: var(--accent);
   background-color: #fff;
 }
+
 .site-nav .menu-icon > svg {
   fill: var(--ink-strong);
 }
+
 .site-nav label[for="nav-trigger"]:hover .menu-icon > svg {
   fill: var(--accent);
 }
+
 /* ---------- 3. 主内容区留白 ---------- */
 .page-content {
   padding: 52px 0 72px;
 }
+
 @media screen and (max-width: 600px) {
   .page-content {
     padding: 32px 0 48px;
   }
 }
+
 /* ---------- 4. 标题层级：靠字重 + 字距 + 留白，不靠彩色边框 ---------- */
 h1, h2, h3, h4, h5, h6,
 .site-title,
@@ -211,6 +254,7 @@ h1, h2, h3, h4, h5, h6,
   letter-spacing: 0.02em;
   text-shadow: none;
 }
+
 /* 正文标题 */
 .post-content h1,
 .post-content h2,
@@ -220,36 +264,44 @@ h1, h2, h3, h4, h5, h6,
   margin-top: 2em;
   margin-bottom: 0.7em;
 }
+
 .post-content h2 {
   font-size: 1.42rem;
   padding-bottom: 0.34em;
   border-bottom: 1px solid var(--line);
   letter-spacing: 0.03em;
 }
+
 .post-content h3 {
   font-size: 1.16rem;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
+
 .post-content h4 {
   font-size: 1.02rem;
   color: var(--ink);
 }
+
 /* 篇章第一个标题不要顶出多余的空白 */
 .post-content > :first-child {
   margin-top: 0;
 }
+
 .post-content p {
   margin-bottom: 1.2em;
 }
+
 /* ---------- 5. 链接：藏青 + 细下划线，去虚线噪点 ---------- */
 a {
   color: var(--accent);
   text-decoration: none;
 }
+
 a:visited {
   color: var(--accent);
 }
+
 a:hover {
   color: var(--accent-deep);
   text-decoration: underline;
@@ -257,10 +309,12 @@ a:hover {
   text-underline-offset: 3px;
   text-decoration-color: rgba(39, 73, 109, 0.5);
 }
+
 ::selection {
   background: rgba(39, 73, 109, 0.16);
   color: var(--ink-strong);
 }
+
 /* ---------- 6. 行内代码：淡墨底 + 藏青字（原来是刺眼的红色） ---------- */
 code {
   font-family: var(--f-mono);
@@ -272,6 +326,7 @@ code {
   padding: 0.18em 0.4em;
   word-break: break-word;
 }
+
 /* 代码块内部的 code 不要再叠一层背景和边距 */
 pre code,
 .highlight code {
@@ -281,6 +336,7 @@ pre code,
   color: inherit;
   font-size: 0.85em;
 }
+
 /* ---------- 7. 代码块：宣纸底 + 左侧墨青竖条 ---------- */
 pre,
 div.highlight,
@@ -291,6 +347,7 @@ code.highlighter-rouge {
   background-color: var(--code-block);
   box-shadow: inset 0 0 0 1px var(--line-soft);
 }
+
 pre,
 div.highlight,
 figure.highlight {
@@ -302,6 +359,7 @@ figure.highlight {
   font-size: 0.93rem;
   -webkit-overflow-scrolling: touch;
 }
+
 div.highlight pre,
 figure.highlight pre,
 .highlight pre {
@@ -312,21 +370,25 @@ figure.highlight pre,
   padding: 0;
   margin: 0;
 }
+
 /* 细滚动条，替代系统那根很重的灰条 */
 pre::-webkit-scrollbar,
 .highlight::-webkit-scrollbar {
   height: 8px;
   width: 8px;
 }
+
 pre::-webkit-scrollbar-thumb,
 .highlight::-webkit-scrollbar-thumb {
   background-color: rgba(39, 73, 109, 0.22);
   border-radius: 4px;
 }
+
 pre::-webkit-scrollbar-track,
 .highlight::-webkit-scrollbar-track {
   background-color: transparent;
 }
+
 /* 代码块在宽屏上可以比正文宽一点，长行少折几次 */
 @media screen and (min-width: 861px) {
   .post-content pre,
@@ -337,6 +399,7 @@ pre::-webkit-scrollbar-track,
     border-radius: 0 8px 8px 0;
   }
 }
+
 /* ---------- 7c. 文章目录（TOC）----------
    目录挂在文章标题下面，用 <details> 做的，不依赖 JavaScript 就能收起展开。
    之所以不做成右侧悬浮目录：那需要把整页容器加宽到 1100px 左右，
@@ -353,6 +416,7 @@ pre::-webkit-scrollbar-track,
   font-size: 0.9rem;
   line-height: 1.7;
 }
+
 .post-toc summary {
   cursor: pointer;
   font-family: var(--f-kai);
@@ -362,10 +426,12 @@ pre::-webkit-scrollbar-track,
   letter-spacing: 0.05em;
   list-style: none;
 }
+
 /* 去掉浏览器默认那个三角，换成自己的箭头 */
 .post-toc summary::-webkit-details-marker {
   display: none;
 }
+
 .post-toc summary::before {
   content: "▸";
   display: inline-block;
@@ -373,12 +439,15 @@ pre::-webkit-scrollbar-track,
   color: var(--accent);
   transition: transform 0.2s ease;
 }
+
 .post-toc[open] summary::before {
   transform: rotate(90deg);
 }
+
 .post-toc summary:hover {
   color: var(--accent);
 }
+
 .post-toc-nav {
   margin-top: 10px;
   padding-left: 2px;
@@ -387,6 +456,7 @@ pre::-webkit-scrollbar-track,
   max-height: 60vh;
   overflow-y: auto;
 }
+
 .post-toc-nav a {
   display: block;
   color: var(--ink-muted);
@@ -396,30 +466,37 @@ pre::-webkit-scrollbar-track,
   padding-left: 10px;
   transition: color 0.18s ease, border-color 0.18s ease;
 }
+
 .post-toc-nav a:hover {
   color: var(--accent);
   border-left-color: var(--accent);
 }
+
 .post-toc-nav a.toc-h3 {
   margin-left: 18px;
   font-size: 0.86rem;
 }
+
 .post-toc-nav a.toc-h2 {
   color: var(--ink);
 }
+
 /* 用细滚动条，避免目录长了以后出现一根很重的灰条 */
 .post-toc-nav::-webkit-scrollbar {
   width: 6px;
 }
+
 .post-toc-nav::-webkit-scrollbar-thumb {
   background-color: rgba(39, 73, 109, 0.2);
   border-radius: 3px;
 }
+
 /* 标题被目录跳转定位时，上面留点空间，别贴着顶栏 */
 .post-content h2,
 .post-content h3 {
   scroll-margin-top: 72px;
 }
+
 /* ---------- 7b. 语法高亮：换成墨青一套色 ----------
 /* ---------- 7b. 语法高亮：换成墨青一套色 ----------
    两套类名都写上，两边都不吃亏：
@@ -427,6 +504,7 @@ pre::-webkit-scrollbar-track,
      · hljs   —— highlight.js 的类名体系，比 rouge 细很多（.hljs-type / .hljs-built_in …）
    只写 rouge 那一套的话，hljs 那边会大量漏色；只写 hljs 则 rouge 漏色。
    两边都覆盖住，无论换成哪个高亮器，配色都是这一套墨青。 */
+
 /* 注释：灰青斜体，最弱一层 */
 .highlight .c,
 .highlight .c1,
@@ -441,6 +519,7 @@ pre::-webkit-scrollbar-track,
   color: #93a3a4;
   font-style: italic;
 }
+
 /* 关键字：藏青加粗 */
 .highlight .k,
 .highlight .kc,
@@ -457,6 +536,7 @@ pre::-webkit-scrollbar-track,
   color: #2c4f74;
   font-weight: 600;
 }
+
 /* 字符串：低饱和苔绿 */
 .highlight .s,
 .highlight .s1,
@@ -480,6 +560,7 @@ pre::-webkit-scrollbar-track,
 .highlight .hljs-template-variable {
   color: #4a6b57;
 }
+
 /* 数字与常量：低饱和赭石，唯一一点暖色，用来把数值挑出来 */
 .highlight .m,
 .highlight .mf,
@@ -492,6 +573,7 @@ pre::-webkit-scrollbar-track,
 .highlight .hljs-number {
   color: #7d5b3c;
 }
+
 /* 类型名、内建函数、标题：浓墨，比正文更实 */
 .highlight .nf,
 .highlight .fm,
@@ -522,6 +604,7 @@ pre::-webkit-scrollbar-track,
 .highlight .hljs-selector-pseudo {
   color: #1f3336;
 }
+
 /* 标点、运算符这些高频字符压到接近正文色，避免满屏花花绿绿 */
 .highlight .p,
 .highlight .o,
@@ -531,37 +614,45 @@ pre::-webkit-scrollbar-track,
 .highlight .hljs-operator {
   color: #3a4a4d;
 }
+
 /* 预处理指令（#include / #define 这类）压低一档，别抢正文注意力 */
 .highlight .hljs-meta,
 .highlight .hljs-meta .hljs-keyword {
   color: #6d7a7d;
   font-weight: 400;
 }
+
 /* diff 场景 */
 .highlight .gd,
 .highlight .hljs-deletion {
   color: #8c3b3b;
   background-color: rgba(140, 59, 59, 0.07);
 }
+
 .highlight .gi,
 .highlight .hljs-addition {
   color: #37664a;
   background-color: rgba(55, 102, 74, 0.07);
 }
+
 .highlight .err {
   color: #8c3b3b;
   background-color: transparent;
 }
+
 .highlight .hljs-section,
 .highlight .hljs-strong {
   font-weight: 600;
 }
+
 .highlight .hljs-emphasis {
   font-style: italic;
 }
+
 .highlight .hljs-link {
   text-decoration: underline;
 }
+
 /* ---------- 8. 引用块：楷体，去掉西文斜体 ---------- */
 blockquote {
   font-family: var(--f-kai);
@@ -575,9 +666,11 @@ blockquote {
   background-image: linear-gradient(to right, rgba(126, 156, 160, 0.1), rgba(126, 156, 160, 0));
   letter-spacing: 0.02em;
 }
+
 blockquote > :last-child {
   margin-bottom: 0;
 }
+
 /* ---------- 9. 表格：窄屏可横向滚动，不再撑破版面 ---------- */
 table {
   display: block;
@@ -589,31 +682,37 @@ table {
   font-size: 0.95rem;
   color: var(--ink);
 }
+
 table th,
 table td {
   padding: 9px 14px;
   border: 1px solid var(--line-soft);
 }
+
 table th {
   background-color: rgba(39, 73, 109, 0.07);
   color: var(--ink-strong);
   font-weight: 600;
   white-space: nowrap;
 }
+
 table tr:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.5);
 }
+
 /* ---------- 10. 列表标记：墨青小点，中文标点更松 ---------- */
 .post-content ul,
 .page-content ul {
   list-style: none;
   margin-left: 3px;
 }
+
 .post-content ul > li,
 .page-content ul > li {
   position: relative;
   padding-left: 20px;
 }
+
 .post-content ul > li::before,
 .page-content ul > li::before {
   content: "";
@@ -625,18 +724,22 @@ table tr:nth-child(even) {
   border-radius: 50%;
   background-color: rgba(39, 73, 109, 0.42);
 }
+
 .post-content li + li,
 .page-content li + li {
   margin-top: 0.38em;
 }
+
 .post-content ol,
 .page-content ol {
   margin-left: 1.4em;
 }
+
 .post-content ol > li::marker,
 .page-content ol > li::marker {
   color: var(--accent);
 }
+
 /* ---------- 11. 图片与分隔线 ---------- */
 .post-content img,
 .page-content img {
@@ -644,6 +747,7 @@ table tr:nth-child(even) {
   box-shadow: var(--shadow-sm);
   margin: 0.4em 0;
 }
+
 figcaption {
   font-family: var(--f-kai);
   font-size: 0.86rem;
@@ -651,6 +755,7 @@ figcaption {
   text-align: center;
   margin-top: 0.6em;
 }
+
 hr {
   border: 0;
   height: 1px;
@@ -661,9 +766,11 @@ hr {
     var(--line) 82%,
     rgba(39, 73, 109, 0) 100%);
 }
+
 /* ==========================================================================
    首页
    ========================================================================== */
+
 /* ---------- 12. 首屏：头像 + 站名 + 一句话 ---------- */
 .home-hero {
   text-align: center;
@@ -671,6 +778,7 @@ hr {
   margin-bottom: 34px;
   border-bottom: 1px solid var(--line-soft);
 }
+
 .home-avatar {
   width: 88px;
   height: 88px;
@@ -680,6 +788,7 @@ hr {
   border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow: 0 3px 14px rgba(31, 45, 51, 0.12);
 }
+
 /* 字号刻意不用 clamp(1.6rem, 1.2rem + 1.6vw, 2.05rem) 这种写法：
    浏览器认，但 GitHub Pages 用的 Dart Sass 1.69.5 会把 clamp() 当成 Sass 自己的
    数学函数，看到 rem 和 vw 相加就报 "Incompatible units" 让整个构建失败。
@@ -692,6 +801,7 @@ hr {
   color: var(--ink-strong);
   margin: 0 0 10px;
 }
+
 .home-tagline {
   font-family: var(--f-kai);
   font-size: 0.98rem;
@@ -699,6 +809,7 @@ hr {
   letter-spacing: 0.1em;
   margin: 0 0 16px;
 }
+
 .home-meta {
   font-family: var(--f-sans);
   font-size: 0.82rem;
@@ -706,21 +817,25 @@ hr {
   letter-spacing: 0.06em;
   margin: 0;
 }
+
 .home-meta a {
   color: var(--ink-muted);
   border-bottom: 1px solid var(--line);
   padding-bottom: 1px;
   transition: color 0.22s ease, border-color 0.22s ease;
 }
+
 .home-meta a:hover {
   color: var(--accent);
   border-bottom-color: var(--accent);
   text-decoration: none;
 }
+
 .home-meta-sep {
   margin: 0 9px;
   color: var(--ink-faint);
 }
+
 /* ---------- 13. 列表标题 + 文章数角标 ---------- */
 .post-list-heading {
   font-family: var(--f-kai);
@@ -733,12 +848,14 @@ hr {
   align-items: center;
   gap: 10px;
 }
+
 .post-list-heading::after {
   content: "";
   flex: 1;
   height: 1px;
   background: linear-gradient(to right, var(--line), rgba(39, 73, 109, 0));
 }
+
 .post-count {
   order: 3;
   font-family: var(--f-mono);
@@ -750,11 +867,17 @@ hr {
   padding: 4px 8px;
   letter-spacing: 0.04em;
 }
+
 /* ---------- 14. 文章卡片：整张可点，悬停微抬 ---------- */
 .post-list {
-  margin-left: 0;
+  margin: 0;
+  /* padding 必须显式归零：浏览器对 <ul> 默认带 padding-inline-start: 40px，
+     不清掉的话卡片会比上面的正文凭空右移 40px，右边缘也短一截
+     （诊断数据里量到的 "padding L/R = 40px / 0px" 就是这个）。 */
+  padding: 0;
   list-style: none;
 }
+
 .post-list > li {
   position: relative;
   margin-bottom: 16px;
@@ -765,11 +888,13 @@ hr {
   box-shadow: var(--shadow-sm);
   transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
 }
+
 .post-list > li:hover {
   transform: translateY(-2px);
   border-color: var(--line);
   box-shadow: var(--shadow-lg);
 }
+
 .post-list .post-meta {
   display: block;
   font-family: var(--f-mono);
@@ -778,6 +903,7 @@ hr {
   letter-spacing: 0.08em;
   margin-bottom: 6px;
 }
+
 .post-list .post-link {
   display: inline-block;
   font-family: var(--f-kai);
@@ -788,6 +914,7 @@ hr {
   letter-spacing: 0.02em;
   text-decoration: none;
 }
+
 /* 让整张卡片都能点，省得只点得到标题那几个字。
    注意用 top/right/bottom/left 而不是 inset，
    因为这里可能的访问者里有老版本 Edge，inset 在它上面不生效。 */
@@ -800,9 +927,11 @@ hr {
   left: 0;
   border-radius: 8px;
 }
+
 .post-list > li:hover .post-link {
   color: var(--accent);
 }
+
 .post-excerpt {
   margin-top: 10px;
   font-size: 0.94rem;
@@ -815,21 +944,26 @@ hr {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 .post-excerpt p {
   margin-bottom: 0;
 }
+
 .post-excerpt a {
   color: var(--accent);
 }
+
 /* ==========================================================================
    文章页
    ========================================================================== */
+
 /* ---------- 15. 文章头部 ---------- */
 .post-header {
   margin-bottom: 34px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--line-soft);
 }
+
 /* 同上：不用 clamp()，否则老版 Dart Sass 会报 Incompatible units */
 .post-title,
 .page-heading {
@@ -841,96 +975,118 @@ hr {
   color: var(--ink-strong);
   margin-bottom: 12px;
 }
+
 .post-meta {
   font-family: var(--f-sans);
   font-size: 0.82rem;
   color: var(--ink-muted);
   letter-spacing: 0.05em;
 }
+
 .post-content {
   margin-bottom: 48px;
 }
+
 /* ---------- 16. 页脚 ---------- */
 .site-footer {
   border-top: 1px solid var(--line-soft);
   padding: 30px 0 34px;
   background-color: rgba(246, 248, 247, 0.7);
 }
+
 .footer-col-wrapper,
 .social-links {
   color: var(--ink-muted);
   font-size: 0.86rem;
 }
+
 .footer-heading {
   font-family: var(--f-kai);
   font-size: 1rem;
   color: var(--ink-strong);
   letter-spacing: 0.06em;
 }
+
 .contact-list,
 .social-media-list {
   font-family: var(--f-sans);
   font-size: 0.85rem;
 }
+
 .social-media-list a,
 .contact-list a {
   color: var(--ink-muted);
 }
+
 .social-media-list a:hover,
 .contact-list a:hover {
   color: var(--accent);
 }
+
 /* ---------- 17. 小屏收尾 ---------- */
 @media screen and (max-width: 600px) {
   :root {
     --font-size: 16.5px;
   }
+
   .home-avatar {
     width: 72px;
     height: 72px;
     margin-bottom: 14px;
   }
+
   .home-hero {
     padding-bottom: 26px;
     margin-bottom: 26px;
   }
+
   /* 小屏把两个大标题收一档 —— 原来 clamp() 干的活，现在靠这两条 */
   .home-title {
     font-size: 1.75rem;
   }
+
   .post-title,
   .page-heading {
     font-size: 1.6rem;
   }
+
   .post-list > li {
     padding: 16px 16px 18px;
   }
+
   .post-list .post-link {
     font-size: 1.08rem;
   }
+
   .post-list > li:hover {
     transform: none;
   }
+
   pre,
   div.highlight,
   figure.highlight {
     padding: 12px 13px;
     border-radius: 0 6px 6px 0;
   }
+
   .post-header {
     margin-bottom: 24px;
   }
+
   .post-content h2 {
     font-size: 1.26rem;
   }
+
   .post-content h3 {
     font-size: 1.08rem;
   }
+
   .post-content ul,
   .page-content ul {
     margin-left: 0;
   }
 }
+
 /* ---------- 18. 打印：去掉装饰，省墨 ---------- */
 @media print {
   .site-header,
@@ -939,15 +1095,599 @@ hr {
   .post-list-heading::after {
     display: none;
   }
+
   body {
     background: #fff;
     font-size: 12pt;
   }
+
   .post-content pre,
   .post-content div.highlight,
   .post-content figure.highlight {
     margin-right: 0;
     margin-left: 0;
     box-shadow: none;
+  }
+}
+
+/* ==========================================================================
+   阅读时长 / 目录 / 复制按钮 / 主题切换 / 搜索 / 标签 / 相关文章 / 归档 / 404
+   ========================================================================== */
+
+/* ---------- 19. 阅读时长与列表里的分类 ---------- */
+.reading-time {
+  font-family: var(--f-sans);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.post-list .post-meta .post-cat {
+  color: var(--ink-faint);
+}
+
+.tag-inline {
+  font-size: 0.9em;
+  color: var(--ink-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.tag-inline:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.post-tags .tag-inline + .tag-inline::before {
+  content: " / ";
+  color: var(--ink-faint);
+  border: 0;
+}
+
+/* ---------- 20. 文章里的复制按钮 ---------- */
+.post-content div.highlight,
+.post-content figure.highlight,
+.post-content pre {
+  position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  font-family: var(--f-sans);
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 6px 10px;
+  color: var(--ink-muted);
+  background-color: var(--paper-raise);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+/* 鼠标进到代码块或键盘聚焦时才显形，平时不打扰阅读 */
+.post-content div.highlight:hover .copy-btn,
+.post-content figure.highlight:hover .copy-btn,
+.post-content pre:hover .copy-btn,
+.copy-btn:focus {
+  opacity: 1;
+}
+
+.copy-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.copy-btn.copied {
+  color: #37664a;
+  border-color: rgba(55, 102, 74, 0.5);
+  opacity: 1;
+}
+
+/* 触屏设备上没有 hover，按钮常显 */
+@media (hover: none) {
+  .copy-btn {
+    opacity: 0.75;
+  }
+}
+
+/* ---------- 21. 主题切换按钮 ---------- */
+.theme-toggle {
+  font-family: var(--f-sans);
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 5px 10px;
+  margin-left: 14px;
+  color: var(--ink-muted);
+  background-color: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background-color: var(--paper-raise);
+}
+
+/* ---------- 22. 搜索页 ---------- */
+.search-box {
+  margin-bottom: 26px;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--f-sans);
+  font-size: 1rem;
+  padding: 12px 16px;
+  color: var(--ink);
+  background-color: var(--paper-raise);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.search-status {
+  margin-top: 10px;
+  font-family: var(--f-sans);
+  font-size: 0.84rem;
+  color: var(--ink-muted);
+}
+
+.search-hit {
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  background-color: var(--paper-raise);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.search-hit-meta {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.search-hit h3 {
+  font-family: var(--f-kai);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.search-hit h3 a {
+  text-decoration: none;
+}
+
+.search-hit-snippet {
+  font-size: 0.92rem;
+  color: var(--ink-muted);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* ---------- 23. 标签页 ---------- */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--f-sans);
+  font-size: 0.86rem;
+  padding: 6px 12px;
+  color: var(--ink);
+  background-color: var(--paper-raise);
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.tag-chip:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.tag-chip-count {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  background-color: var(--accent-soft);
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
+.tag-section {
+  margin-bottom: 40px;
+  scroll-margin-top: 72px;
+}
+
+.tag-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-kai);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+}
+
+.tag-section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--line), rgba(39, 73, 109, 0));
+}
+
+/* ---------- 24. 相关文章 ---------- */
+.related {
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.related-title {
+  font-family: var(--f-kai);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+}
+
+.related-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.related-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--line-soft);
+}
+
+.related-list li:last-child {
+  border-bottom: 0;
+}
+
+.related-list a {
+  flex: 1;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.related-list a:hover {
+  color: var(--accent);
+}
+
+.related-date {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ---------- 25. 归档页 ---------- */
+.archive-summary {
+  font-family: var(--f-sans);
+  font-size: 0.86rem;
+  color: var(--ink-muted);
+  margin-bottom: 28px;
+}
+
+.archive-year {
+  margin-bottom: 34px;
+}
+
+.archive-year-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink-strong);
+  margin-bottom: 14px;
+}
+
+.archive-year-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--line), rgba(39, 73, 109, 0));
+}
+
+.archive-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.archive-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line-soft);
+}
+
+.archive-list li:last-child {
+  border-bottom: 0;
+}
+
+.archive-date {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  min-width: 44px;
+}
+
+.archive-link {
+  flex: 1;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.archive-link:hover {
+  color: var(--accent);
+}
+
+.archive-cat {
+  font-family: var(--f-sans);
+  font-size: 0.76rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ---------- 26. 404 页 ---------- */
+.notfound {
+  text-align: center;
+  padding: 30px 0 10px;
+}
+
+.notfound-code {
+  font-family: var(--f-mono);
+  font-size: 4rem;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--line);
+  margin: 0 0 10px;
+}
+
+.notfound-text {
+  font-family: var(--f-kai);
+  font-size: 1.05rem;
+  color: var(--ink-muted);
+  margin-bottom: 28px;
+}
+
+.notfound-search {
+  display: flex;
+  gap: 8px;
+  max-width: 420px;
+  margin: 0 auto 22px;
+}
+
+.notfound-search input {
+  flex: 1;
+  font-family: var(--f-sans);
+  font-size: 0.95rem;
+  padding: 10px 14px;
+  color: var(--ink);
+  background-color: var(--paper-raise);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+}
+
+.notfound-search input:focus {
+  border-color: var(--accent);
+}
+
+.notfound-search button {
+  font-family: var(--f-sans);
+  font-size: 0.95rem;
+  padding: 10px 20px;
+  color: #fff;
+  background-color: var(--accent);
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.notfound-search button:hover {
+  background-color: var(--accent-deep);
+}
+
+.notfound-links {
+  font-family: var(--f-sans);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+/* ==========================================================================
+   暗色模式
+   --------------------------------------------------------------------------
+   只覆盖 :root 里的变量，其余样式全部自动跟随 —— 这是当初把配色集中成
+   一套 CSS 变量的回报，深色主题总共不到 30 行，而且不会漏掉任何组件。
+   触发方式有两种：系统偏好（prefers-color-scheme）和顶栏的手动切换
+   （手动选择写在 html[data-theme] 上，优先级更高）。
+   ========================================================================== */
+:root[data-theme="dark"] {
+  --paper:        #171b1d;
+  --paper-raise:  #1f2528;
+  --ink:          #cbd4d6;
+  --ink-strong:   #edf2f3;
+  --ink-muted:    #8d9b9f;
+  --ink-faint:    #6b7a7e;
+
+  /* 深色底上藏青会糊掉，换成亮一档的蓝 */
+  --accent:       #8fb4d9;
+  --accent-deep:  #b3cfe8;
+  --accent-soft:  rgba(143, 180, 217, 0.14);
+
+  --line:         rgba(180, 205, 215, 0.18);
+  --line-soft:    rgba(180, 205, 215, 0.10);
+  --code-bg:      rgba(180, 205, 215, 0.10);
+  --code-block:   #1c2226;
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md:    0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg:    0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:        #171b1d;
+    --paper-raise:  #1f2528;
+    --ink:          #cbd4d6;
+    --ink-strong:   #edf2f3;
+    --ink-muted:    #8d9b9f;
+    --ink-faint:    #6b7a7e;
+    --accent:       #8fb4d9;
+    --accent-deep:  #b3cfe8;
+    --accent-soft:  rgba(143, 180, 217, 0.14);
+    --line:         rgba(180, 205, 215, 0.18);
+    --line-soft:    rgba(180, 205, 215, 0.10);
+    --code-bg:      rgba(180, 205, 215, 0.10);
+    --code-block:   #1c2226;
+    --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md:    0 8px 24px rgba(0, 0, 0, 0.45);
+    --shadow-lg:    0 12px 32px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* 深色下需要单独处理的几处：白色叠加层、代码块底色、语法高亮 */
+:root[data-theme="dark"] body {
+  background-image:
+    radial-gradient(62% 44% at 10% 0%, rgba(90, 130, 140, 0.18), rgba(90, 130, 140, 0) 68%),
+    radial-gradient(52% 40% at 92% 6%, rgba(80, 110, 130, 0.14), rgba(80, 110, 130, 0) 70%),
+    linear-gradient(180deg, #1a1f21 0%, #171b1d 48%, #14181a 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body {
+    background-image:
+      radial-gradient(62% 44% at 10% 0%, rgba(90, 130, 140, 0.18), rgba(90, 130, 140, 0) 68%),
+      radial-gradient(52% 40% at 92% 6%, rgba(80, 110, 130, 0.14), rgba(80, 110, 130, 0) 70%),
+      linear-gradient(180deg, #1a1f21 0%, #171b1d 48%, #14181a 100%);
+  }
+}
+
+:root[data-theme="dark"] .site-header {
+  background-color: rgba(23, 27, 29, 0.86);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .site-header {
+    background-color: rgba(23, 27, 29, 0.86);
+  }
+}
+
+/* minima 给 .highlight 写死了白色底，深色模式下必须盖掉 */
+.highlight {
+  background: transparent;
+}
+
+table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* 深色下语法高亮整体提亮一档，保证在 #1c2226 上够清晰 */
+:root[data-theme="dark"] .highlight .c,
+:root[data-theme="dark"] .highlight .c1,
+:root[data-theme="dark"] .highlight .cm,
+:root[data-theme="dark"] .highlight .cs,
+:root[data-theme="dark"] .highlight .hljs-comment {
+  color: #7d8c8e;
+}
+
+:root[data-theme="dark"] .highlight .k,
+:root[data-theme="dark"] .highlight .kd,
+:root[data-theme="dark"] .highlight .kn,
+:root[data-theme="dark"] .highlight .kt,
+:root[data-theme="dark"] .highlight .ow,
+:root[data-theme="dark"] .highlight .hljs-keyword {
+  color: #8fb4d9;
+}
+
+:root[data-theme="dark"] .highlight .s,
+:root[data-theme="dark"] .highlight .s1,
+:root[data-theme="dark"] .highlight .s2,
+:root[data-theme="dark"] .highlight .sb,
+:root[data-theme="dark"] .highlight .sc,
+:root[data-theme="dark"] .highlight .sd,
+:root[data-theme="dark"] .highlight .hljs-string {
+  color: #8fbfa2;
+}
+
+:root[data-theme="dark"] .highlight .m,
+:root[data-theme="dark"] .highlight .mi,
+:root[data-theme="dark"] .highlight .mf,
+:root[data-theme="dark"] .highlight .hljs-number {
+  color: #d3a271;
+}
+
+:root[data-theme="dark"] .highlight .nf,
+:root[data-theme="dark"] .highlight .nc,
+:root[data-theme="dark"] .highlight .nn,
+:root[data-theme="dark"] .highlight .nv,
+:root[data-theme="dark"] .highlight .nb,
+:root[data-theme="dark"] .highlight .hljs-title,
+:root[data-theme="dark"] .highlight .hljs-type,
+:root[data-theme="dark"] .highlight .hljs-built_in {
+  color: #e3ecee;
+}
+
+:root[data-theme="dark"] .highlight .p,
+:root[data-theme="dark"] .highlight .o,
+:root[data-theme="dark"] .highlight .n,
+:root[data-theme="dark"] .highlight .hljs-punctuation,
+:root[data-theme="dark"] .highlight .hljs-operator {
+  color: #aab7b9;
+}
+
+:root[data-theme="dark"] .highlight .hljs-meta,
+:root[data-theme="dark"] .highlight .hljs-meta .hljs-keyword {
+  color: #93a3a5;
+}
+
+/* 主题切换时给颜色加一点过渡；用 .theme-ready 保证首屏不闪 */
+body.theme-ready,
+body.theme-ready * {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.theme-ready,
+  body.theme-ready * {
+    transition: none;
   }
 }
