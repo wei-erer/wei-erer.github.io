@@ -11,13 +11,19 @@ baseurl: ""
 url: "https://wei-erer.github.io"
 github_username: wei-erer
 # twitter_username: jekyllrb
+
 # 外观
 avatar: "/assets/images/avatar.jpg"      # ★ 新增：首页头像（原来这行没有任何模板读它，所以从没显示过）
 show_excerpts: true                      # ★ 新增：首页文章卡片显示摘要
 tagline: "于二进制世界中寻仙问道"          # ★ 新增：首页站名下面那句话
+
 # 顶部导航
 header_pages:
+  - archive.html
+  - tags.html
+  - search.html
   - about.markdown
+
 # 构建
 #
 # 说明：minima 2.5 的配色走 Sass 变量（$brand-color 那一套），不读 CSS 变量，
@@ -26,12 +32,16 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag                       # ★ 新增：社交分享卡片 / 搜索结果摘要
-# 排除：下面三个目录只在本地有用（离线预览、皮肤原稿、自检脚本），
-# 不需要上传，也不用让 Jekyll 处理。
+
+# 排除：下面几个目录只在本地有用（离线预览、皮肤原稿、自检脚本、
+# 上传用的 txt 副本），不需要上传，也不用让 Jekyll 处理。
 exclude:
   - _reference
   - _tools
   - _preview
+  - _uploads
+  - _sasscheck
+
 # 以下为 Jekyll 自带的排除项说明，保留备查。
 # Exclude from processing.
 # The following items will not be processed, by default.
