@@ -1,0 +1,60 @@
+---
+layout: plain
+title: 标签
+permalink: /tags/
+---
+
+{%- comment -%}
+  标签与分类汇总页。全部用 Liquid 在构建时算好，不需要插件，也不需要 JavaScript。
+  每个标签一个小节，点标题可以单独跳到那一节。
+{%- endcomment -%}
+
+{%- if site.tags.size > 0 -%}
+<div class="tag-cloud">
+  {%- for tag in site.tags -%}
+    <a class="tag-chip" href="#tag-{{ tag[0] | slugify }}">{{ tag[0] }}<span class="tag-chip-count">{{ tag[1].size }}</span></a>
+  {%- endfor -%}
+</div>
+
+{%- for tag in site.tags -%}
+<section class="tag-section" id="tag-{{ tag[0] | slugify }}">
+  <h2 class="tag-section-title">{{ tag[0] }}<span class="post-count">{{ tag[1].size }}</span></h2>
+  <ul class="post-list">
+    {%- for post in tag[1] -%}
+    <li>
+      <span class="post-meta"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time></span>
+      <h3><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
+      {%- if site.show_excerpts -%}
+        <div class="post-excerpt">{{ post.excerpt }}</div>
+      {%- endif -%}
+    </li>
+    {%- endfor -%}
+  </ul>
+</section>
+{%- endfor -%}
+{%- else -%}
+  <p>还没有给文章打标签。</p>
+{%- endif -%}
+
+{%- if site.categories.size > 0 -%}
+<h2 class="tag-section-title" id="categories">分类<span class="post-count">{{ site.categories.size }}</span></h2>
+<div class="tag-cloud">
+  {%- for cat in site.categories -%}
+    <a class="tag-chip" href="#cat-{{ cat[0] | slugify }}">{{ cat[0] }}<span class="tag-chip-count">{{ cat[1].size }}</span></a>
+  {%- endfor -%}
+</div>
+
+{%- for cat in site.categories -%}
+<section class="tag-section" id="cat-{{ cat[0] | slugify }}">
+  <h3 class="tag-section-title">{{ cat[0] }}<span class="post-count">{{ cat[1].size }}</span></h3>
+  <ul class="post-list">
+    {%- for post in cat[1] -%}
+    <li>
+      <span class="post-meta"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time></span>
+      <h3><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
+    </li>
+    {%- endfor -%}
+  </ul>
+</section>
+{%- endfor -%}
+{%- endif -%}
