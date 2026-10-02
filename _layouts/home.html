@@ -21,7 +21,13 @@ layout: default
     {%- endif -%}
 
     <p class="home-meta">
-      <a href="{{ '/feed.xml' | relative_url }}">RSS 订阅</a>
+      <a href="{{ '/archive/' | relative_url }}">全部文章</a>
+      <span class="home-meta-sep">·</span>
+      <a href="{{ '/tags/' | relative_url }}">标签</a>
+      <span class="home-meta-sep">·</span>
+      <a href="{{ '/search/' | relative_url }}">搜索</a>
+      <span class="home-meta-sep">·</span>
+      <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
     </p>
   </header>
 
@@ -36,6 +42,12 @@ layout: default
         {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
         <span class="post-meta">
           <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
+          {%- if post.categories.size > 0 -%}
+            <span class="post-meta-sep">·</span>
+            <span class="post-cat">{{ post.categories | join: " / " }}</span>
+          {%- endif -%}
+          <span class="post-meta-sep">·</span>
+          <span class="reading-time" data-words="{{ post.content | strip_html | number_of_words }}"></span>
         </span>
 
         <h3>
@@ -53,3 +65,16 @@ layout: default
   {%- endif -%}
 
 </div>
+
+<script>
+/* 阅读时长：字数在构建时就用 number_of_words 算好放在 data-words 上，
+   这里只做一次除法。中文按每分钟 400 字估（比英文慢，所以取值保守）。 */
+(function () {
+  var els = document.querySelectorAll('.reading-time');
+  for (var i = 0; i < els.length; i++) {
+    var w = parseInt(els[i].getAttribute('data-words'), 10) || 0;
+    if (w < 50) { els[i].style.display = 'none'; continue; }
+    els[i].textContent = '约 ' + Math.max(1, Math.round(w / 400)) + ' 分钟';
+  }
+})();
+</script>
