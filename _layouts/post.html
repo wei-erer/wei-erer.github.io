@@ -15,6 +15,16 @@ layout: default
         <span class="post-meta-sep">·</span>
         <span class="post-categories">{{ page.categories | join: " / " }}</span>
       {%- endif -%}
+      {%- if page.tags.size > 0 -%}
+        <span class="post-meta-sep">·</span>
+        <span class="post-tags">
+          {%- for tag in page.tags -%}
+            <a class="tag-inline" href="{{ '/tags/' | relative_url }}#tag-{{ tag | slugify }}">{{ tag }}</a>
+          {%- endfor -%}
+        </span>
+      {%- endif -%}
+      <span class="post-meta-sep">·</span>
+      <span class="reading-time" id="reading-time"></span>
       {%- if page.author -%}
         <span class="post-meta-sep">·</span>
         <span itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -24,8 +34,8 @@ layout: default
     </p>
   </header>
 
-  <!-- 目录容器默认隐藏。下面那段脚本会遍历正文里的 h2 / h3：
-       小标题够多才生成目录并把容器显示出来，够不着就让它一直 hidden。 -->
+  <!-- 目录容器默认隐藏，脚本会遍历正文的 h2 / h3：
+       小标题够多才生成目录并显示，够不着就一直隐藏。 -->
   <nav class="post-toc" id="post-toc" hidden aria-label="文章目录">
     <details>
       <summary>本文目录</summary>
@@ -37,6 +47,45 @@ layout: default
     {{ content }}
   </div>
 
+  <!-- 阅读时长交给脚本算：中文按字数、英文按词数分别统计，构建时拿不到准确值 -->
+  <span id="reading-time-source" hidden>{{ content | strip_html }}</span>
+
+  {%- comment -%}
+    相关文章：按共同标签数排序，取前 3 篇。
+    用 "命中数|链接|标题|日期" 拼字符串再排序，是因为 Liquid 没有对象数组的排序能力。
+  {%- endcomment -%}
+  {%- assign related = "" | split: "" -%}
+  {%- for other in site.posts -%}
+    {%- if other.url != page.url -%}
+      {%- assign common = 0 -%}
+      {%- for t in other.tags -%}
+        {%- if page.tags contains t -%}
+          {%- assign common = common | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if common > 0 -%}
+        {%- capture item -%}{{ common }}|{{ other.url }}|{{ other.title | escape }}|{{ other.date | date: "%Y-%m-%d" }}{%- endcapture -%}
+        {%- assign related = related | push: item -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- assign related = related | sort | reverse -%}
+
+  {%- if related.size > 0 -%}
+  <aside class="related">
+    <h2 class="related-title">相关文章</h2>
+    <ul class="related-list">
+      {%- for item in related limit: 3 -%}
+        {%- assign parts = item | split: "|" -%}
+        <li>
+          <a href="{{ parts[1] | relative_url }}">{{ parts[2] }}</a>
+          <span class="related-date">{{ parts[3] }}</span>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </aside>
+  {%- endif -%}
+
   {%- if site.disqus.shortname -%}
     {%- include disqus_comments.html -%}
   {%- endif -%}
@@ -45,61 +94,113 @@ layout: default
 </article>
 
 <script>
-/* 文章目录：遍历正文里的小标题，生成锚点链接。
-   整段包在 IIFE 里，不往 window 上挂任何东西。
-   小标题少于 4 个时（短文）直接不显示，免得占地方。 */
 (function () {
+  /* ---------- 阅读时长 ---------- */
+  var src = document.getElementById('reading-time-source');
+  var out = document.getElementById('reading-time');
+  if (src && out) {
+    var t = src.textContent || '';
+    var cjk = (t.match(/[\u4e00-\u9fa5]/g) || []).length;
+    var en = (t.replace(/[\u4e00-\u9fa5]/g, ' ').match(/[A-Za-z0-9_]+/g) || []).length;
+    /* 中文 400 字/分钟，英文 200 词/分钟 */
+    var mins = Math.max(1, Math.round(cjk / 400 + en / 200));
+    out.textContent = '约 ' + mins + ' 分钟';
+  }
+
+  /* ---------- 目录 ---------- */
   var content = document.querySelector('.post-content');
   var host = document.getElementById('post-toc');
   var nav = document.getElementById('post-toc-nav');
-  if (!content || !host || !nav) return;
-
-  var heads = content.querySelectorAll('h2, h3');
-  if (heads.length < 4) return;
-
-  function slug(text) {
-    return String(text)
-      .trim()
-      .toLowerCase()
-      .replace(/[\s]+/g, '-')
-      .replace(/[^\w\u4e00-\u9fa5-]/g, '')
-      .replace(/-{2,}/g, '-')
-      .replace(/^-+|-+$/g, '');
+  if (content && host && nav) {
+    var heads = content.querySelectorAll('h2, h3');
+    if (heads.length >= 4) {
+      var slug = function (text) {
+        return String(text).trim().toLowerCase()
+          .replace(/[\s]+/g, '-')
+          .replace(/[^\w\u4e00-\u9fa5-]/g, '')
+          .replace(/-{2,}/g, '-')
+          .replace(/^-+|-+$/g, '');
+      };
+      var used = {};
+      Array.prototype.forEach.call(heads, function (h) {
+        var id = h.id;
+        if (!id) {
+          id = slug(h.textContent) || 'sec';
+          if (used[id]) { used[id]++; id = id + '-' + used[id]; } else { used[id] = 1; }
+          h.id = id;
+        }
+        var a = document.createElement('a');
+        a.href = '#' + id;
+        a.textContent = h.textContent.trim();
+        a.className = h.tagName === 'H3' ? 'toc-h3' : 'toc-h2';
+        nav.appendChild(a);
+      });
+      host.hidden = false;
+      nav.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          var d = host.querySelector('details');
+          if (d) d.open = false;
+        }
+      });
+    }
   }
 
-  var used = {};
+  /* ---------- 代码块复制按钮 ---------- */
+  if (!content) return;
+  var blocks = content.querySelectorAll('div.highlight, figure.highlight, pre');
+  Array.prototype.forEach.call(blocks, function (block) {
+    /* 只处理最外层，避免 div.highlight 里面的 pre 再被加一个按钮 */
+    var p = block.parentNode;
+    while (p && p !== content) {
+      if (p.tagName && (p.tagName === 'DIV' || p.tagName === 'FIGURE')
+          && (p.className || '').indexOf('highlight') >= 0) return;
+      p = p.parentNode;
+    }
+    if (block.getAttribute('data-copy-ready')) return;
+    block.setAttribute('data-copy-ready', '1');
 
-  Array.prototype.forEach.call(heads, function (h) {
-    var id = h.id;
-    if (!id) {
-      id = slug(h.textContent) || 'sec';
-      if (used[id]) {
-        used[id]++;
-        id = id + '-' + used[id];
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制这段代码');
+
+    btn.addEventListener('click', function () {
+      var codeEl = block.querySelector('code') || block;
+      var text = codeEl.innerText;
+      var done = function () {
+        btn.textContent = '已复制';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = '复制';
+          btn.classList.remove('copied');
+        }, 1600);
+      };
+      var fail = function () {
+        btn.textContent = '复制失败';
+        setTimeout(function () { btn.textContent = '复制'; }, 1600);
+      };
+      var legacy = function () {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('style', 'position:fixed;top:-1000px');
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          done();
+        } catch (e) { fail(); }
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, legacy);
       } else {
-        used[id] = 1;
+        legacy();
       }
-      h.id = id;
-    }
+    });
 
-    var a = document.createElement('a');
-    a.href = '#' + id;
-    a.textContent = h.textContent.trim();
-    /* h3 缩进一层，层级一眼能看出来 */
-    a.className = h.tagName === 'H3' ? 'toc-h3' : 'toc-h2';
-    nav.appendChild(a);
-  });
-
-  host.hidden = false;
-
-  /* 点链接后自动收起目录。
-     不用 preventDefault：交给浏览器原生跳转，
-     地址栏会出现 #锚点，方便复制给别人直接定位到某一节。 */
-  nav.addEventListener('click', function (e) {
-    if (e.target.tagName === 'A') {
-      var d = host.querySelector('details');
-      if (d) d.open = false;
-    }
+    block.appendChild(btn);
   });
 })();
 </script>
