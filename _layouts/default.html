@@ -1,3 +1,71 @@
-{%- include head.html -%} {%- include header.html -%}
-{{ content }}
-{%- include footer.html -%}
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+  {%- include head.html -%}
+
+  <body>
+
+    {%- include header.html -%}
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        {{ content }}
+      </div>
+    </main>
+
+    {%- include footer.html -%}
+
+  </body>
+
+</html>
+
+<script>
+/* 暗色模式切换。
+   放在 body 之后而不是 head 里，是为了不干扰 Jekyll 主题自带的 head 结构
+   （那是 bootstrap 式的嵌套 include，改坏了很难查）。
+   闪白由 _includes/head.html 里的一小段前置脚本负责避免。 */
+(function () {
+  var root = document.documentElement;
+  var nav = document.querySelector('.site-nav');
+  if (!nav) return;
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'theme-toggle';
+  btn.setAttribute('aria-label', '切换深色 / 浅色主题');
+
+  function label() {
+    /* 显示的是「点下去会变成什么」，所以深色时显示「浅色」 */
+    var dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') &&
+        window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    btn.textContent = dark ? '浅色' : '深色';
+    btn.title = dark ? '切换到浅色主题' : '切换到深色主题';
+  }
+
+  btn.addEventListener('click', function () {
+    var isDark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') &&
+        window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) { /* 隐私模式下会抛错，忽略 */ }
+    label();
+  });
+
+  label();
+  var trigger = nav.querySelector('.trigger');
+  if (trigger) {
+    nav.insertBefore(btn, trigger);
+  } else {
+    nav.appendChild(btn);
+  }
+})();
+
+/* 等页面稳定后再开启颜色过渡，避免首屏出现「渐变闪一下」 */
+requestAnimationFrame(function () {
+  requestAnimationFrame(function () {
+    document.body.classList.add('theme-ready');
+  });
+});
+</script>
