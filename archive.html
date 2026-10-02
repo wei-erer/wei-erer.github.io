@@ -1,0 +1,36 @@
+---
+layout: plain
+title: 归档
+permalink: /archive/
+---
+
+{%- comment -%}
+  按年份分组的全部文章。group_by_exp 在构建时算好，纯 Liquid，不需要插件。
+{%- endcomment -%}
+
+{%- assign by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" -%}
+
+{%- if site.posts.size > 0 -%}
+<div class="archive">
+  <p class="archive-summary">共 {{ site.posts.size }} 篇文章</p>
+
+  {%- for year in by_year -%}
+  <section class="archive-year">
+    <h2 class="archive-year-title">{{ year.name }}<span class="post-count">{{ year.items.size }}</span></h2>
+    <ul class="archive-list">
+      {%- for post in year.items -%}
+      <li>
+        <span class="archive-date">{{ post.date | date: "%m-%d" }}</span>
+        <a class="archive-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        {%- if post.categories.size > 0 -%}
+          <span class="archive-cat">{{ post.categories | join: " / " }}</span>
+        {%- endif -%}
+      </li>
+      {%- endfor -%}
+    </ul>
+  </section>
+  {%- endfor -%}
+</div>
+{%- else -%}
+  <p>还没有文章。</p>
+{%- endif -%}
