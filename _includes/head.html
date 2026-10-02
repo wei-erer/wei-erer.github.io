@@ -1,0 +1,1 @@
+{%- comment -%} 主题初始化必须放在这里、放在样式表加载之前。 否则深色偏好的读者会先看到一帧白底，再跳成深色（俗称闪白）。 这段脚本只读 localStorage 并设置一个 html 属性，不依赖任何库。 {%- endcomment -%} {%- seo -%} {%- feed_meta -%} {%- if jekyll.environment == 'production' and site.google_analytics -%} {%- include google-analytics.html -%} {%- endif -%}
