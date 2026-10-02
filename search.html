@@ -1,0 +1,143 @@
+---
+layout: plain
+permalink: /search/
+---
+
+<h1 class="post-title">搜索</h1>
+
+<div class="search-box">
+  <input type="search" id="search-input" class="search-input"
+         placeholder="输入关键词，边打边筛……" autocomplete="off" spellcheck="false">
+  <div class="search-status" id="search-status">正在准备索引……</div>
+</div>
+
+<div id="search-results" class="search-results"></div>
+
+{%- comment -%}
+  文章索引直接内联在本页里，每篇一行 JSON，由下面脚本读取。
+  不单独生成 search.json 的原因：那个文件用 file:// 打开时会被浏览器
+  当跨域拦掉，本地预览就用不了了。内联则线上线下都能工作。
+  text 截到 4000 字，够搜到正文内容，又不会让页面变得很大。
+{%- endcomment -%}
+{%- for post in site.posts -%}
+{%- assign plain = post.content | strip_html -%}
+<script type="application/json">{"title":{{ post.title | jsonify }},"url":{{ post.url | relative_url | jsonify }},"date":{{ post.date | date: "%Y-%m-%d" | jsonify }},"cat":{{ post.categories | join: " / " | jsonify }},"tags":{{ post.tags | join: " " | jsonify }},"text":{{ plain | truncate: 4000 | jsonify }}}</script>
+{%- endfor -%}
+
+<script>
+(function () {
+  var input = document.getElementById('search-input');
+  var statusEl = document.getElementById('search-status');
+  var resultsEl = document.getElementById('search-results');
+  if (!input || !resultsEl) return;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  /* 读出本页内联的索引 */
+  var docs = [];
+  var nodes = document.querySelectorAll('script[type="application/json"]');
+  for (var i = 0; i < nodes.length; i++) {
+    try { docs.push(JSON.parse(nodes[i].textContent)); } catch (e) { /* 跳过坏行 */ }
+  }
+
+  /* 打分：标题权重最高，其次标签，最后正文。
+     中文按单字切、英文按空格切，一个函数同时应付两种输入。 */
+  function score(doc, q) {
+    var title = (doc.title || '').toLowerCase();
+    var tags = ((doc.tags || '') + ' ' + (doc.cat || '')).toLowerCase();
+    var text = (doc.text || '').toLowerCase();
+    var s = 0;
+
+    if (title.indexOf(q) >= 0) s += 60;
+    if (tags.indexOf(q) >= 0) s += 30;
+
+    var isCJK = /[\u4e00-\u9fa5]/.test(q);
+    var parts = isCJK ? q.split('') : q.split(/\s+/).filter(Boolean);
+    var hit = 0;
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      if (!p) continue;
+      if (title.indexOf(p) >= 0) { s += 12; hit++; continue; }
+      if (tags.indexOf(p) >= 0) { s += 8; hit++; continue; }
+      var n = text.split(p).length - 1;
+      if (n > 0) { s += Math.min(n, 8); hit++; }
+    }
+    if (hit === 0) return 0;
+    /* 关键词全都命中的额外加分，避免只沾一个字就窜到前面 */
+    if (hit === parts.length) s += 25;
+    return s;
+  }
+
+  function snippet(text, q) {
+    var t = text || '';
+    var idx = t.toLowerCase().indexOf(q);
+    if (idx < 0) {
+      var isCJK = /[\u4e00-\u9fa5]/.test(q);
+      var parts = isCJK ? q.split('') : q.split(/\s+/).filter(Boolean);
+      for (var i = 0; i < parts.length; i++) {
+        var j = t.toLowerCase().indexOf(parts[i]);
+        if (j >= 0) { idx = j; break; }
+      }
+    }
+    if (idx < 0) idx = 0;
+    var start = Math.max(0, idx - 40);
+    var out = (start > 0 ? '…' : '') + t.slice(start, start + 150)
+            + (t.length > start + 150 ? '…' : '');
+    return esc(out);
+  }
+
+  function render(q) {
+    q = (q || '').trim().toLowerCase();
+    if (!q) {
+      resultsEl.innerHTML = '';
+      statusEl.textContent = '共 ' + docs.length + ' 篇文章已建立索引，输入关键词开始搜索。';
+      return;
+    }
+
+    var hits = [];
+    for (var i = 0; i < docs.length; i++) {
+      var sc = score(docs[i], q);
+      if (sc > 0) hits.push({ d: docs[i], s: sc });
+    }
+    hits.sort(function (a, b) { return b.s - a.s; });
+
+    statusEl.textContent = hits.length
+      ? '找到 ' + hits.length + ' 篇相关文章'
+      : '没有匹配的文章，换个词试试？';
+
+    var html = '';
+    for (var k = 0; k < hits.length; k++) {
+      var d = hits[k].d;
+      html += '<article class="search-hit">'
+        + '<div class="search-hit-meta">' + esc(d.date)
+        + (d.tags ? ' · ' + esc(d.tags) : '') + '</div>'
+        + '<h3><a href="' + esc(d.url) + '">' + esc(d.title) + '</a></h3>'
+        + '<p class="search-hit-snippet">' + snippet(d.text, q) + '</p>'
+        + '</article>';
+    }
+    resultsEl.innerHTML = html;
+  }
+
+  statusEl.textContent = docs.length
+    ? '共 ' + docs.length + ' 篇文章已建立索引，输入关键词开始搜索。'
+    : '索引为空，检查一下 search.html 里的索引代码。';
+
+  var timer = null;
+  input.addEventListener('input', function () {
+    clearTimeout(timer);
+    var v = input.value;
+    timer = setTimeout(function () { render(v); }, 120);
+  });
+
+  /* 支持 /search/?q=关键词 直接带参数进来（404 页面就用了这个） */
+  var m = location.search.match(/[?&]q=([^&]*)/);
+  if (m) {
+    input.value = decodeURIComponent(m[1].replace(/\+/g, ' '));
+    render(input.value);
+  }
+})();
+</script>
