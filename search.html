@@ -93,20 +93,22 @@ permalink: /search/
     q = (q || '').trim().toLowerCase();
     if (!q) {
       resultsEl.innerHTML = '';
-      statusEl.textContent = '共 ' + docs.length + ' 篇文章已建立索引，输入关键词开始搜索。';
+      statusEl.textContent = '共 ' + docs.length + ' 篇文章已建立索引。输入关键词开始搜索。';
       return;
     }
 
     var hits = [];
     for (var i = 0; i < docs.length; i++) {
       var sc = score(docs[i], q);
+      /* 只有真的匹配上（分数大于 0）才收进结果，不匹配的一律不显示 */
       if (sc > 0) hits.push({ d: docs[i], s: sc });
     }
     hits.sort(function (a, b) { return b.s - a.s; });
 
+    /* 状态行写清楚「索引几篇、命中几篇」，方便一眼确认搜索真的在过滤 */
     statusEl.textContent = hits.length
-      ? '找到 ' + hits.length + ' 篇相关文章'
-      : '没有匹配的文章，换个词试试？';
+      ? '索引 ' + docs.length + ' 篇 · 命中 ' + hits.length + ' 篇'
+      : '索引 ' + docs.length + ' 篇 · 没有匹配「' + q + '」的文章，换个词试试？';
 
     var html = '';
     for (var k = 0; k < hits.length; k++) {
@@ -122,8 +124,11 @@ permalink: /search/
   }
 
   statusEl.textContent = docs.length
-    ? '共 ' + docs.length + ' 篇文章已建立索引，输入关键词开始搜索。'
+    ? '共 ' + docs.length + ' 篇文章已建立索引。输入关键词开始搜索。'
     : '索引为空，检查一下 search.html 里的索引代码。';
+
+  /* 把索引篇数也写成 HTML 属性，方便在浏览器里一眼核对 */
+  resultsEl.setAttribute('data-index-count', String(docs.length));
 
   var timer = null;
   input.addEventListener('input', function () {
