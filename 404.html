@@ -1,25 +1,24 @@
 ---
+layout: plain
+title: 页面走丢了
 permalink: /404.html
-layout: page
+sitemap: false
 ---
 
-<style type="text/css" media="screen">
-  .container {
-    margin: 10px auto;
-    max-width: 600px;
-    text-align: center;
-  }
-  h1 {
-    margin: 30px 0;
-    font-size: 4em;
-    line-height: 1;
-    letter-spacing: -1px;
-  }
-</style>
+<div class="notfound">
+  <p class="notfound-code">404</p>
+  <p class="notfound-text">你要找的页面不存在，或者已经被搬走了。</p>
 
-<div class="container">
-  <h1>404</h1>
+  <form class="notfound-search" action="{{ '/search/' | relative_url }}" method="get">
+    <input type="search" name="q" placeholder="在站内搜一下……" aria-label="站内搜索">
+    <button type="submit">搜索</button>
+  </form>
 
-  <p><strong>Page not found :(</strong></p>
-  <p>The requested page could not be found.</p>
+  <p class="notfound-links">
+    <a href="{{ '/' | relative_url }}">回首页</a>
+    <span class="home-meta-sep">·</span>
+    <a href="{{ '/archive/' | relative_url }}">全部文章</a>
+    <span class="home-meta-sep">·</span>
+    <a href="{{ '/tags/' | relative_url }}">标签</a>
+  </p>
 </div>
